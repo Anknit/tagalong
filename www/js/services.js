@@ -102,4 +102,3 @@ angular.module('app.services', [])
     ob_locationService.setOption = fn_setOptions;
     return ob_locationService;
 }]);
-

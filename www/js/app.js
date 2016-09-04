@@ -1,6 +1,7 @@
+/*global angular*/
 (function onInit() {
-    var isAuth = localStorage.getItem("isAuth");
-    var locationPath;
+    'use strict';
+    var locationPath, isAuth = localStorage.getItem("isAuth");
     if (typeof isAuth === "undefined") {
         locationPath = "./signup.html";
     } else if (isAuth === "true") {
@@ -15,10 +16,15 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
     .constant('AUTH_SERVICE_BASE', 'http://devserver1.tisaaw.com:12102/')
     .constant('API_SERVICE_BASE', 'http://devserver1.tisaaw.com:12101/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
+    .constant('UPLOAD_URI', 'http://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('USER_ROLE', 1)
     .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE) {
         'use strict';
         $rootScope.side_menu = document.getElementsByTagName("ion-side-menu")[0];
+        $rootScope.userData = {
+            name: localStorage.getItem('name'),
+            userName: localStorage.getItem('username')
+        };
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromParams) {
             if (toState.roles !== 3 && toState.roles !== USER_ROLE) {
                 event.preventDefault();
@@ -52,39 +58,37 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 // org.apache.cordova.statusbar required
                 $window.StatusBar.styleDefault();
             }
+            if ($window.PushNotification) {
+                push = $window.PushNotification.init({
+                    "android": {
+                        "senderID": "406789023201"
+                    },
+                    "ios": {
+                        "alert": "true",
+                        "badge": "true",
+                        "sound": "true"
+                    },
+                    "$windows": {}
+                });
 
-/*
-            push = $window.PushNotification.init({
-                "android": {
-                    "senderID": "406789023201"
-                },
-                "ios": {
-                    "alert": "true",
-                    "badge": "true",
-                    "sound": "true"
-                },
-                "$windows": {}
-            });
+                push.on('registration', function (data) {
+                    $window.alert(data.registrationId);
+                    // data.registrationId
+                });
 
-            push.on('registration', function (data) {
-                $window.alert(data.registrationId);
-                // data.registrationId
-            });
+                push.on('notification', function (data) {
+                    $window.alert(data.message);
+                    // data.message,
+                    // data.title,
+                    // data.count,
+                    // data.sound,
+                    // data.image,
+                    // data.additionalData
+                });
 
-            push.on('notification', function (data) {
-                $window.alert(data.message);
-                // data.message,
-                // data.title,
-                // data.count,
-                // data.sound,
-                // data.image,
-                // data.additionalData
-            });
-
-            push.on('error', function (e) {
-                $window.alert(e.message);
-            });
-*/
-
+                push.on('error', function (e) {
+                    $window.alert(e.message);
+                });
+            }
         });
     });

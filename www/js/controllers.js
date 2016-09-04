@@ -3,7 +3,6 @@
     'use strict';
     var modCtrl = angular.module('app.controllers', []);
     modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window) {
-        'use strict';
         $rootScope.side_menu.style.display = "none";
         $rootScope.authSuccess = true;
         $rootScope.hideSplash = true;
@@ -37,7 +36,6 @@
         });
     }]);
     modCtrl.controller('aboutCtrl', ['$scope', '$rootScope', 'userprofileService', function ($scope, $rootScope, userprofileService) {
-        'use strict';
         $scope.editMode = false;
         $scope.saveProfileAbout = function () {
             $scope.editMode = false;
@@ -58,7 +56,6 @@
         }());
     }]);
     modCtrl.controller('locationCtrl', ['$scope', function ($scope) {
-        'use strict';
         $scope.editMode = false;
         $scope.saveProfileLocation = function () {
             $scope.editMode = false;
@@ -86,7 +83,6 @@
         }());
     }]);
     modCtrl.controller('contactCtrl', ['$scope', function ($scope) {
-        'use strict';
         $scope.editMode = false;
         $scope.saveProfileContact = function () {
             $scope.editMode = false;
@@ -101,8 +97,7 @@
             $scope.contactHome = localStorage.getItem("contactHome");
         }());
     }]);
-    modCtrl.controller('creditDebitCardCtrl', ['$scope','$window', function ($scope, $window) {
-        'use strict';
+    modCtrl.controller('creditDebitCardCtrl', ['$scope', '$window', function ($scope, $window) {
         $scope.addCardDetails = function (scope) {
             localStorage.setItem("cardNumber", $scope.cardNumber);
             localStorage.setItem("cardExpiry", $scope.cardExpiry.getTime());
@@ -112,8 +107,7 @@
             $window.location.href = "#profile/account";
         };
     }]);
-    modCtrl.controller('checkingAccountCtrl', ['$scope','$window', function ($scope, $window) {
-        'use strict';
+    modCtrl.controller('checkingAccountCtrl', ['$scope', '$window', function ($scope, $window) {
         $scope.addCheckingAccount = function () {
             if ($scope.checkingAccountNum === $scope.checkingAccountNumConfirm) {
                 localStorage.setItem("checkingAccountName", $scope.checkingAccountName);
@@ -126,8 +120,7 @@
             }
         };
     }]);
-    modCtrl.controller('paypalAccountCtrl', ['$scope','$window', function ($scope, $window) {
-        'use strict';
+    modCtrl.controller('paypalAccountCtrl', ['$scope', '$window', function ($scope, $window) {
         $scope.addPaypalAccount = function () {
             localStorage.setItem("paypalAccountEmail", $scope.paypalAccountEmail);
             localStorage.setItem("paypalAccountNum", $scope.paypalAccountNum);
@@ -135,8 +128,7 @@
             $window.location.href = "#profile/directPayment";
         };
     }]);
-    modCtrl.controller('directAccountCtrl', ['$scope','$window', function ($scope, $window) {
-        'use strict';
+    modCtrl.controller('directAccountCtrl', ['$scope', '$window', function ($scope, $window) {
         $scope.directPaymentOpt = "paypal";
         $scope.addDirectPayment = function () {
             if ($scope.directPaymentOpt === "paypal") {
@@ -146,117 +138,39 @@
             }
         };
     }]);
-    modCtrl.controller('uploadDocumentsCtrl', ['$scope','$window', function ($scope, $window) {
-        'use strict';
-        $scope.serverUploadPath = '';
-
-        function getImageFromDevice(onSuccess) {
-            function onFail(message) {
-                $window.alert('Failed because: ' + message);
-            }
-            $window.navigator.camera.getPicture(onSuccess, onFail, {
-                quality: 50,
-                destinationType: $window.Camera.DestinationType.FILE_URI,
-                sourceType: 0
-            });
-
-            /*
-                    function onSuccess(imageURI) {
-                        var image = document.getElementById('myImage');
-                        image.src = imageURI;
-                    }
-            */
-
-        }
-
-        function createNewFileEntry(imgUri) {
-            window.resolveLocalFileSystemURL($window.cordova.file.cacheDirectory, function success(dirEntry) {
-
-                // JPEG file
-                dirEntry.getFile("tempFile.jpeg", {
-                    create: true,
-                    exclusive: false
-                }, function (fileEntry) {
-
-                    // Do something with it, like write to it, upload it, etc.
-                    // writeFile(fileEntry, imgUri);
-                    // displayFileData(fileEntry.fullPath, "File copied to");
-
-                }, function () {
-                    $window.alert('Failed Get File');
-                });
-            }, function () {
-                $window.alert('Failed resolve Local File Entry');
-            });
-        }
-
-        function getFileEntry(imgUri, onSuccess) {
-            window.resolveLocalFileSystemURL(imgUri, onSuccess, function () {
-                // If don't get the FileEntry (which may happen when testing
-                // on some emulators), copy to a new FileEntry.
-                createNewFileEntry(imgUri);
-            });
-        }
-
-        function upload(fileEntry, success) {
-            // !! Assumes variable fileURL contains a valid URL to a text file on the device,
-
-            /*
-                    var success = function (r) {
-                        console.log("Successful upload...");
-                        console.log("Code = " + r.responseCode);
-                        displayFileData(fileEntry.fullPath + " (content uploaded to server)");
-                    }
-            */
-
-            var fileURL = fileEntry.toURL(),
-                fail = function (error) {
-                    $window.alert("An error has occurred: Code = " + error.code);
-                },
-                SERVER = 'https://www.wisdomtalkies.com/wisdom-talkies/php/appdata.php',
-                options = new $window.FileUploadOptions(),
-                params = {},
-                ft = new $window.FileTransfer();
-            options.fileKey = "file";
-            options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-            options.mimeType = "text/plain";
-
-            params.value1 = "test";
-            params.value2 = "param";
-
-            options.params = params;
-
-            // SERVER must be a URL that can handle the request, like
-            // http://some.server.com/upload.php
-            ft.upload(fileURL, encodeURI(SERVER), success, fail, options);
-        }
-        var successFileUpload = function (response) {},
-            successFileEntry = function (fileEntry) {
-                if ($scope.serverUploadPath === '') {
-                    $window.alert('No path to upload');
-                    return false;
-                }
-                upload(fileEntry, successFileUpload, $scope.serverUploadPath);
-            },
-            successFetch = function (imageURI) {
-                getFileEntry(imageURI, successFileEntry);
-            };
+    modCtrl.controller('uploadDocumentsCtrl', ['$scope', 'docMgrService', function ($scope, docMgrService) {
+        $scope.showUploadOption = false;
+        $scope.uploadDocType = 0;
         $scope.getDriverLicense = function () {
-            $scope.serverUploadPath = 'https://wisdomtalkies.com/wisdom-talkies/';
-            getImageFromDevice(successFetch);
+            docMgrService.loadDocImage(function (imgUri) {
+                $scope.imgData = imgUri;
+                $scope.showUploadOption = true;
+                $scope.uploadDocType = 1;
+            });
+        };
+        $scope.uploadDocument = function () {
+            if ($scope.uploadDocType) {
+                docMgrService.uploadDocument($scope.imgData, function (response) {
+                    window.console.log(response);
+                });
+            }
         };
         $scope.getVehicleRegistration = function () {
-            $scope.serverUploadPath = 'https://wisdomtalkies.com/wisdom-talkies/';
-            getImageFromDevice(successFetch);
+            docMgrService.loadDocImage(function (imgUri) {
+                $scope.imgData = imgUri;
+                $scope.showUploadOption = true;
+                $scope.uploadDocType = 2;
+            });
         };
         $scope.getVehicleInsurance = function () {
-            $scope.serverUploadPath = 'https://wisdomtalkies.com/wisdom-talkies/';
-            getImageFromDevice(successFetch);
+            docMgrService.loadDocImage(function (imgUri) {
+                $scope.imgData = imgUri;
+                $scope.showUploadOption = true;
+                $scope.uploadDocType = 3;
+            });
         };
-
     }]);
     modCtrl.controller('settingsCtrl', ['$scope', function ($scope) {
-        'use strict';
         $scope.logout = function () {
             localStorage.setItem("isAuth", "false");
             localStorage.setItem("isRemember", "false");
