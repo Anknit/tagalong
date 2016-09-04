@@ -1,0 +1,28 @@
+<ion-view title="Credit/Debit Card" id="page14" class=" ">
+    <ion-content padding="true" class="has-header">
+        <h4 id="creditDebitCard-heading9" style="color:#000000;" class=" ">Add a credit or debit card</h4>
+        <p id="creditDebitCard-markdown2" style="color:#000000;" class=" ">We accepts American Express, Visa, Discover and Mastercard</p>
+        <form id="creditDebitCard-form9" class="list ">
+            <label class="item item-input item-stacked-label " id="creditDebitCard-input8">
+                <span class="input-label">Card Number</span>
+                <input type="text" placeholder="card number" ng-model="$parent.cardNumber">
+            </label>
+            <label class="item item-input item-stacked-label " id="creditDebitCard-input9">
+                <span class="input-label">Expiration Date</span>
+                <input type="month" placeholder="" ng-model="$parent.cardExpiry">
+            </label>
+            <label class="item item-input item-stacked-label " id="creditDebitCard-input26">
+                <span class="input-label">Name on card</span>
+                <input type="text" placeholder="Cardholder Name" ng-model="$parent.cardholderName">
+            </label>
+            <label class="item item-input item-stacked-label " id="creditDebitCard-input27">
+                <span class="input-label">Billing Address</span>
+                <input type="text" placeholder="address" ng-model="$parent.cardBillingAddress">
+            </label>
+            <div style="text-align:center;margin-top:10px;">
+                <button id="creditDebitCard-button6" class=" button button-balanced" ng-click="$parent.addCardDetails();">Confirm</button>
+                <a ui-sref="profile.account" class="button button-stable">Cancel</a>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

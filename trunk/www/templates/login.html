@@ -1,0 +1,43 @@
+<ion-view title="Login" id="page5" style="background-color:#FFFFFF;" class=" " hide-nav-bar="true">
+    <ion-content padding="true" scroll="false" class="has-header">
+        <h2 style="text-align:center;">Login</h2>
+        <form id="loginForm">
+            <div class="ng-cloak" ng-show="!usernameFetched">
+                <form id="login-form3" class="list ">
+                    <label class="item item-input " id="login-input4">
+                        <input type="email" placeholder="email address" name="username" ng-model="$parent.username" required>
+                    </label>
+                </form>
+                <div style="text-align:center;margin:20px 0px;">
+                    <button id="login-button3" class=" button button-calm" ng-click="showPasswordOptions()" style="margin:auto;">Submit</button>
+                </div>
+                <div style="text-align:center;">
+                    <table style="margin:auto;">
+                        <tr style="vertical-align:middle">
+                            <td style="vertical-align:middle">First time ? </td>
+                            <td style="vertical-align:middle"><a ui-sref="signup" id="login-button4" style="font-size:14px;" class=" button button-energized  button-outline ">Signup</a></td>
+                        </tr>
+                    </table>
+                    
+                </div>
+            </div>
+            <div class="ng-cloak" ng-show="usernameFetched">
+                <form id="login-form5" class="list">
+                    <div>
+                        <div id="username-display">
+                            <p>{{username}}</p>
+                        </div>
+                    </div>
+                    <label class="item item-input " id="login-input7">
+                        <input type="password" placeholder="password" name="passwd" ng-model="$parent.password">
+                    </label>
+                    <ion-checkbox name="remember-pswd" ng-model="$parent.remember">Remember me</ion-checkbox>
+                </form>
+                <div style="text-align:center;margin:20px 0px;">
+                    <button id="login-button12" style="text-align:right;" class=" button button-calm" ng-click="onLogin()">Use password</button>
+                    <button id="login-button13" style="text-align:left;" class=" button button-calm">Launch Demo</button>
+                </div>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

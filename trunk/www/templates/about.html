@@ -1,0 +1,30 @@
+<ion-view title="About" id="page10" class=" ">
+    <ion-content padding="true" class="has-header">
+        <form id="about-form12" class="list ">
+            <label class="item item-input item-stacked-label " id="about-input15">
+                <span class="input-label">Name</span>
+                <input type="text" placeholder="" ng-disabled="!$parent.editMode" ng-model="$parent.profileName">
+            </label>
+            <label class="item item-select " id="about-select1" name="user-gender">
+                <span class="input-label">Gender</span>
+                <select ng-disabled="!$parent.editMode" ng-model="$parent.profileGender">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Not Disclosed</option>
+                </select>
+            </label>
+            <label class="item item-input item-stacked-label " id="about-input16">
+                <span class="input-label">Birthday</span>
+                <input type="date" placeholder="" ng-disabled="!$parent.editMode" ng-model="$parent.profileDOB">
+            </label>
+        </form>
+        <h4 id="about-heading4" style="color:#000000;" class=" ">Member Since</h4>
+        <form id="about-form13" class="list">
+            <ion-toggle toggle-class="toggle-positive" id="about-toggle4" class=" " ng-model="$parent.commEnabled" ng-disabled="!$parent.editMode">Preferred communication</ion-toggle>
+            <ion-checkbox name="email-comm" ng-disabled="!($parent.editMode && $parent.commEnabled)" ng-model="$parent.commEmail">Email</ion-checkbox>
+            <ion-checkbox name="sms-comm" ng-disabled="!($parent.editMode && $parent.commEnabled)" ng-model="$parent.commSMS">SMS</ion-checkbox>
+            <button id="about-button23" class=" button button-positive  button-block ng-cloak" ng-show="!$parent.editMode" ng-click="$parent.editMode = !$parent.editMode">Edit</button>
+            <button id="about-button24" class=" button button-balanced  button-block ng-cloak" ng-show="$parent.editMode" ng-click="$parent.saveProfileAbout();">Save</button>
+        </form>
+    </ion-content>
+</ion-view>

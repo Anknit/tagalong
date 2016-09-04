@@ -1,0 +1,16 @@
+<ion-view title="Settings" id="page21" class=" ">
+    <ion-content padding="true" class="has-header">
+        <h4 id="settings-heading13" style="color:#000000;text-align:center;" class=" ">Notifications</h4>
+        <form id="settings-form17" class="list ">
+            <ion-toggle toggle-class="toggle-calm" ng-model="$parent.settingsPushNotification" ng-change="$parent.toggleSetting(1);">Push Notifications</ion-toggle>
+            <ion-toggle toggle-class="toggle-calm" ng-model="$parent.settingsAppNotification" ng-change="$parent.toggleSetting(2);">In-app Notification</ion-toggle>
+            <ion-toggle toggle-class="toggle-calm" ng-model="$parent.settingsSound" ng-change="$parent.toggleSetting(3);">Sound</ion-toggle>
+            <ion-toggle toggle-class="toggle-calm" ng-model="$parent.settingsVibrate" ng-change="$parent.toggleSetting(4);">Vibrate</ion-toggle>
+            <ion-toggle toggle-class="toggle-calm" ng-model="$parent.settingsLocationAccess" ng-change="$parent.toggleSetting(5);">Location Access</ion-toggle>
+            <ion-toggle toggle-class="toggle-calm" ng-model="$parent.settingsCameraAccess" ng-change="$parent.toggleSetting(6);">Camera Access</ion-toggle>
+            <h4 id="settings-heading14" style="color:#000000;text-align:center;" class=" ">Privacy</h4>
+            <ion-toggle toggle-class="toggle-calm" ng-model="$parent.settingsProfilePicture" ng-change="$parent.toggleSetting(7);">Profile Picture</ion-toggle>
+        </form>
+        <button id="settings-button8" class=" button button-assertive  button-block icon ion-log-out " ng-click="logout();">Logout</button>
+    </ion-content>
+</ion-view>
