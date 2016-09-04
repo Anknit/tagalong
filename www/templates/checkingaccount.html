@@ -1,0 +1,29 @@
+<ion-view title="Tagalong" id="page16" class=" ">
+    <ion-content padding="true" class="has-header">
+        <h4 id="tagalong-heading11" style="color:#000000;" class=" ">Add a checking account</h4>
+        <p id="tagalong-markdown4" style="color:#000000;" class=" ">Enter your checking account information</p>
+        <form id="tagalong-form19" class="list ">
+            <label class="item item-input item-stacked-label " id="tagalong-input32">
+                <span class="input-label">Account Name</span>
+                <input type="text" placeholder="name on account" ng-model="$parent.checkingAccountName">
+            </label>
+            <label class="item item-input item-stacked-label " id="tagalong-input33">
+                <span class="input-label">Routing #</span>
+                <input type="text" placeholder="routing number" ng-model="$parent.checkingAccountRoutingNum">
+            </label>
+            <label class="item item-input item-stacked-label " id="tagalong-input34">
+                <span class="input-label">Account #</span>
+                <input type="text" placeholder="checking account number" ng-model="$parent.checkingAccountNum">
+            </label>
+            <label class="item item-input item-stacked-label " id="tagalong-input35">
+                <span class="input-label">Re-enter Account #</span>
+                <input type="text" placeholder="checking account number" ng-model="$parent.checkingAccountNumConfirm">
+            </label>
+            <p id="tagalong-markdown5" style="color:#000000;" class=" ">By clicking on the confirm button I agree to the terms and condition of using my checking account as a payment method</p>
+            <div style="text-align:center;">
+                <button id="tagalong-button14" class=" button button-balanced" ng-click="$parent.addCheckingAccount()">Confirm</button>
+                <a ui-sref="profile.directAccount" class="button button-stable">Cancel</a>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

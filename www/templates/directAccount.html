@@ -1,0 +1,11 @@
+<ion-view title="Direct Account" id="page15" class=" ">
+    <ion-content padding="true" class="has-header">
+        <h4 id="directAccount-heading10" style="color:#000000;" class=" ">Add a direct deposit account</h4>
+        <p id="directAccount-markdown3" style="color:#000000;" class=" ">Enter your checking account or paypal account information</p>
+        <form id="directAccount-form18" class="list ">
+            <ion-radio ng-model="$parent.directPaymentOpt" value="checking">Checking Account</ion-radio>
+            <ion-radio ng-model="$parent.directPaymentOpt" value="paypal">Paypal Account</ion-radio>
+        </form>
+        <button id="directAccount-button11" class=" button button-positive button-block button-outline" ng-click="addDirectPayment()">Next</button>
+    </ion-content>
+</ion-view>

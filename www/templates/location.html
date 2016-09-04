@@ -1,0 +1,34 @@
+<ion-view title="Location" id="page11" class=" ">
+    <ion-content padding="true" class="has-header">
+        <h4 id="location-heading5" style="color:#000000;" class=" ">Home address</h4>
+        <form id="location-form14" class="list ">
+            <label class="item item-input " id="location-input17">
+                <input type="text" placeholder="Street Address" ng-model="$parent.homeStreet" ng-disabled="!$parent.editMode">
+            </label>
+            <label class="item item-input " id="location-input18">
+                <input type="text" placeholder="State" ng-model="$parent.homeState" ng-disabled="!$parent.editMode">
+            </label>
+            <label class="item item-input " id="location-input19" name="home-zip">
+                <input type="text" placeholder="zip" ng-model="$parent.homeZip" ng-disabled="!$parent.editMode">
+            </label>
+        </form>
+        <h4 id="location-heading7" style="color:#000000;" class=" ">Billing address</h4>
+        <form id="location-form15" class="list ">
+            <ion-checkbox name="same-billing-add" ng-model="$parent.sameBilling" ng-disabled="!$parent.editMode" ng-hide="!$parent.editMode && !$parent.sameBilling">same as home address</ion-checkbox>
+            <div ng-hide="$parent.sameBilling" class="ng-cloak">
+                <label class="item item-input " id="location-input20">
+                    <input type="text" placeholder="Street Address" ng-model="$parent.billStreet" ng-disabled="!$parent.editMode">
+                </label>
+                <label class="item item-input " id="location-input21">
+                    <input type="text" placeholder="State" ng-model="$parent.billState" ng-disabled="!$parent.editMode">
+                </label>
+                <label class="item item-input " id="location-input22" name="bill-zip">
+                    <input type="text" placeholder="zip" ng-model="$parent.billZip" ng-disabled="!$parent.editMode">
+                </label>
+            </div>
+            <ion-checkbox ng-model="$parent.addZipFav" class="ng-cloak" ng-show="$parent.editMode">Add zipcode to favorites</ion-checkbox>
+            <button id="location-button25" class=" button button-positive  button-block ng-cloak" ng-show="!$parent.editMode" ng-click="$parent.editMode = !$parent.editMode">Edit</button>
+            <button id="location-button26" class=" button button-balanced  button-block ng-cloak" ng-show="$parent.editMode" ng-click="$parent.saveProfileLocation();">Save</button>
+        </form>
+    </ion-content>
+</ion-view>

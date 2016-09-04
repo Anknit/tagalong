@@ -1,0 +1,38 @@
+<ion-view title="Signup" id="page7" style="background-color:#FFFFFF;" class=" " hide-nav-bar="true">
+    <ion-content padding="true" class="has-header">
+        <form id="signup-form4" class="list ">
+            <label class="item item-input item-stacked-label " id="signup-input6" name="sign-fname">
+                <span class="input-label">First name</span>
+                <input type="text" placeholder="first name" ng-model="$parent.firstname">
+            </label>
+            <label class="item item-input item-stacked-label " id="signup-input10" name="sign-lname">
+                <span class="input-label">Last name</span>
+                <input type="text" placeholder="last name" ng-model="$parent.lastname">
+            </label>
+            <label class="item item-input item-stacked-label " id="signup-input11" name="sign-uname">
+                <span class="input-label">Username</span>
+                <input type="email" placeholder="email address" ng-model="$parent.username">
+            </label>
+            <label class="item item-input item-stacked-label " id="signup-input12" name="sign-pswd">
+                <span class="input-label">Password</span>
+                <input type="{{$parent.passwordField}}" placeholder="8 or more characters" ng-model="$parent.passwd">
+            </label>
+            <ion-checkbox ng-model="$parent.showPassword" ng-click="$parent.changePasswordField()">Show password</ion-checkbox>
+            <label class="item item-input item-stacked-label " id="signup-input13" name="sign-num">
+                <span class="input-label">Mobile #</span>
+                <input type="tel" placeholder="mobile number" ng-model="$parent.mobilenum">
+            </label>
+        </form>
+        <button type="button" id="signup-button5" class=" button button-calm  button-block " ng-click="$parent.onSignUp()">Sign up</button>
+        <div>
+            <div style="text-align:center">
+                <a href="/legal">Legal</a>and
+                <a href="/privacy">Privacy</a>
+            </div>
+        </div>
+        <div>
+            <div style="margin-top:5px;text-align:center;">Already User</div>
+        </div>
+        <a ui-sref="login" id="signup-button18" class=" button button-calm  button-block button-outline ">Login</a>
+    </ion-content>
+</ion-view>

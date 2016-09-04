@@ -1,0 +1,21 @@
+<ion-view title="Tagalong" id="page17" class=" ">
+    <ion-content padding="true" class="has-header">
+        <h4 id="tagalong2-heading12" style="color:#000000;" class=" ">Add a paypal account</h4>
+        <p id="tagalong2-markdown6" style="color:#000000;" class=" ">Enter your paypal account information</p>
+        <form id="tagalong2-form20" class="list ">
+            <label class="item item-input item-stacked-label " id="tagalong2-input36">
+                <span class="input-label">Paypal Account Email</span>
+                <input type="email" placeholder="email address" ng-model="$parent.paypalAccountEmail">
+            </label>
+            <label class="item item-input item-stacked-label " id="tagalong2-input37">
+                <span class="input-label">Paypal Phone #</span>
+                <input type="text" placeholder="phone number" ng-model="$parent.paypalAccountNum">
+            </label>
+            <p id="tagalong2-markdown7" style="color:#000000;" class=" ">By clicking on the confirm button I agree to the terms and condition of using my paypal account as a payment method</p>
+            <div style="text-align:center;">
+                <button id="tagalong2-button30" class=" button button-balanced" ng-click="$parent.addPaypalAccount();">Confirm</button>
+                <a ui-sref="profile.directAccount" class="button button-stable">Cancel</a>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

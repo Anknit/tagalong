@@ -1,0 +1,64 @@
+.platform-ios .manual-ios-statusbar-padding{
+    padding-top:20px;
+}
+.manual-remove-top-padding{
+    padding-top:0px;
+}
+.manual-remove-top-padding .scroll{
+    padding-top:0px !important;
+}
+ion-list.manual-list-fullwidth div.list, .list.card.manual-card-fullwidth {
+    margin-left:-10px;
+    margin-right:-10px;
+}
+ion-list.manual-list-fullwidth div.list > .item, .list.card.manual-card-fullwidth > .item {
+    border-radius:0px;
+    border-left:0px;
+    border-right: 0px;
+}
+.splashscreen{
+    position: fixed;
+    top:0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    z-index: 10;
+    background: #fff;
+}
+.splashscreen img{
+    position: absolute;
+    top:0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    margin:auto;
+}
+.loading-blocker{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 10;
+    background-color: rgba(15,15,15,0.15);
+    display:none;
+}
+.loading-blocker .inner{
+    text-align: center;
+    background: #fff;
+    height: 70px;
+    width: 80%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    border-radius: 5px;
+    right: 0;
+    box-shadow: 0px 5px 15px #777;
+}
+.loading-blocker .inner img{
+    width: 64px;
+    height: 64px;
+    vertical-align: middle;
+}

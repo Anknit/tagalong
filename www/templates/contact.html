@@ -1,0 +1,20 @@
+<ion-view title="Contact" id="page12" class=" ">
+    <ion-content padding="true" class="has-header">
+        <form id="contact-form16" class="list ">
+            <label class="item item-input item-stacked-label " id="contact-input23">
+                <span class="input-label">Email</span>
+                <input type="email" placeholder="email address" ng-model="$parent.contactEmail" ng-disabled="!$parent.editMode">
+            </label>
+            <label class="item item-input item-stacked-label " id="contact-input24">
+                <span class="input-label">Mobile #</span>
+                <input type="tel" placeholder="mobile number" ng-model="$parent.contactMobile" ng-disabled="!$parent.editMode">
+            </label>
+            <label class="item item-input item-stacked-label " id="contact-input25">
+                <span class="input-label">Home #</span>
+                <input type="tel" placeholder="home number" ng-model="$parent.contactHome" ng-disabled="!$parent.editMode">
+            </label>
+        </form>
+        <button id="contact-button27" class=" button button-positive  button-block ng-cloak" ng-show="!$parent.editMode" ng-click="$parent.editMode = !$parent.editMode">Edit</button>
+        <button id="contact-button28" class=" button button-balanced  button-block ng-cloak" ng-show="$parent.editMode" ng-click="$parent.saveProfileContact()">Save</button>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>TagAlong</title>
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="cordova.js"></script>
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <style type="text/css">
+      .platform-ios .manual-ios-statusbar-padding{
+        padding-top:20px;
+      }
+      .manual-remove-top-padding{
+        padding-top:0px; 
+      }
+      .manual-remove-top-padding .scroll{
+        padding-top:0px !important;
+      }
+      ion-list.manual-list-fullwidth div.list, .list.card.manual-card-fullwidth {
+        margin-left:-10px;
+        margin-right:-10px;
+      }
+      ion-list.manual-list-fullwidth div.list > .item, .list.card.manual-card-fullwidth > .item {
+        border-radius:0px;
+        border-left:0px;
+        border-right: 0px;
+      }
+    </style>
+    <script src="js/config.js"></script>
+    <script src="js/verificationSuccess.js"></script>
+</head>
+<body ng-app="verifySuccess">
+    <div ng-controller="verificationSuccessCtrl">
+            <h4 style="color:#000000;" class=" ">Verification Successful</h4>
+            <ul class="list">
+                <li class="item item-toggle">
+                    Toggle 1
+                    <label class="toggle">
+                        <input type="checkbox" ng-model="driverPref" name="driver-partner" ng-change="$parent.changeDriverPreference()">
+                            <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </li>
+            </ul>
+        <!--
+                <ion-toggle toggle-class="toggle-balanced" id="verficationSuccess-toggle2" >
+                    Do you want to be a driver partner
+                </ion-toggle>
+-->
+            <p style="color:#000000;font-size:12px;">Please fill in the driver section!</p>
+            <a href="./home.html" id="verficationSuccess-button20" class=" button button-calm  button-block button-outline ">Skip</a>
+    </div>
+</body>
+</html>
