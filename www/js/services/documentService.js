@@ -19,21 +19,19 @@ angular.module('app.services').service('docMgrService', ['$window', 'UPLOAD_URI'
             createNewFileEntry(imgUri);
         });
     }
-    function upload(fileEntry, success) {
+    function upload(fileEntry, addParams, success) {
         var fileURL = fileEntry.toURL(),
             fail = function (error) {
                 $window.alert("An error has occurred: Code = " + error.code);
             },
             options = new $window.FileUploadOptions(),
-            params = {},
+            params = addParams,
             ft = new $window.FileTransfer();
         options.fileKey = "file";
         options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
         options.mimeType = "image/jpeg";
-
-        params.value1 = "username";
-        params.value2 = $rootScope.userData.userName;
-
+        options.headers = {'Content-Type': undefined};
+        params.username = $rootScope.userData.userName;
         options.params = params;
         ft.upload(fileURL, encodeURI(UPLOAD_URI), success, fail, options);
     }
@@ -49,10 +47,14 @@ angular.module('app.services').service('docMgrService', ['$window', 'UPLOAD_URI'
                 sourceType: 0
             });
         },
-        uploadDocument: function (imgUri, uploadSuccess) {
+        uploadDocument: function (imgUri, addParams, uploadSuccess) {
             getFileEntry(imgUri, function (fileEntry) {
-                upload(fileEntry, function (uploadResponse) {
-                    uploadSuccess(uploadResponse);
+                upload(fileEntry, addParams, function (uploadResponse) {
+                    if (uploadResponse.responseCode === 200) {
+                        uploadSuccess(JSON.parse(uploadResponse.response));
+                    } else {
+                        window.alert('Failed to upload document');
+                    }
                 });
             });
         },

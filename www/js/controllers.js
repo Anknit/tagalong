@@ -139,35 +139,94 @@
         };
     }]);
     modCtrl.controller('uploadDocumentsCtrl', ['$scope', 'docMgrService', function ($scope, docMgrService) {
+        var additionalData = {};
         $scope.showUploadOption = false;
         $scope.uploadDocType = 0;
-        $scope.getDriverLicense = function () {
+        $scope.documents = [];
+        $scope.license = {
+            expiry: '',
+            number: '',
+            state: ''
+        };
+        $scope.registration = {
+            expiry: '',
+            vin: '',
+            state: '',
+            carmake: '',
+            carmodel: '',
+            caryear: ''
+        };
+        $scope.insurance = {
+            expiry: ''
+        };
+        function loadDocument(docType) {
             docMgrService.loadDocImage(function (imgUri) {
                 $scope.imgData = imgUri;
-                $scope.showUploadOption = true;
-                $scope.uploadDocType = 1;
+                $scope.licenseImgName = '';
+                $scope.insuranceImgName = '';
+                $scope.registrationImgName = '';
+                $scope.licenseLoaded = false;
+                $scope.insuranceLoaded = false;
+                $scope.registrationLoaded = false;
+                $scope.uploadDocType = docType;
+                switch (docType) {
+                case 1:
+                    $scope.licenseLoaded = true;
+                    $scope.licenseImgName = imgUri.substr(imgUri.lastIndexOf('/') + 1);
+                    additionalData = $scope.license;
+                    break;
+                case 2:
+                    $scope.registrationLoaded = true;
+                    $scope.registrationImgName = imgUri.substr(imgUri.lastIndexOf('/') + 1);
+                    additionalData = $scope.registration;
+                    break;
+                case 3:
+                    $scope.insuranceLoaded = true;
+                    $scope.insuranceImgName = imgUri.substr(imgUri.lastIndexOf('/') + 1);
+                    additionalData = $scope.insurance;
+                    break;
+                default:
+                    break;
+                }
+                additionalData.docType = docType;
+                $scope.$digest();
             });
-        };
-        $scope.uploadDocument = function () {
-            if ($scope.uploadDocType) {
-                docMgrService.uploadDocument($scope.imgData, function (response) {
-                    window.console.log(response);
-                });
-            }
+        }
+        function uploadDocument() {
+            docMgrService.uploadDocument($scope.imgData, additionalData, function (response) {
+                $scope.documents = response.collection.items;
+                $scope.uploadDocType = 0;
+                window.alert('Document uploaded successfully');
+            });
+        }
+        $scope.getDriverLicense = function () {
+            loadDocument(1);
         };
         $scope.getVehicleRegistration = function () {
-            docMgrService.loadDocImage(function (imgUri) {
-                $scope.imgData = imgUri;
-                $scope.showUploadOption = true;
-                $scope.uploadDocType = 2;
-            });
+            loadDocument(2);
         };
         $scope.getVehicleInsurance = function () {
-            docMgrService.loadDocImage(function (imgUri) {
-                $scope.imgData = imgUri;
-                $scope.showUploadOption = true;
-                $scope.uploadDocType = 3;
-            });
+            loadDocument(3);
+        };
+        $scope.uploadCurrentDocument = function () {
+            if ($scope.uploadDocType) {
+                uploadDocument();
+            }
+        };
+        $scope.cancelUpload = function () {
+            $scope.uploadDocType = 0;
+            $scope.licenseImgName = '';
+            $scope.insuranceImgName = '';
+            $scope.registrationImgName = '';
+            $scope.licenseLoaded = false;
+            $scope.insuranceLoaded = false;
+            $scope.registrationLoaded = false;
+        };
+        $scope.showLoadedImage = function () {
+            $scope.showUploadOption = true;
+        };
+        $scope.closePreview = function () {
+            $scope.showUploadOption = false;
         };
     }]);
     modCtrl.controller('settingsCtrl', ['$scope', function ($scope) {
