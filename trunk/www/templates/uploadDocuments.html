@@ -1,91 +1,116 @@
 <ion-view title="Upload Documents" id="page19" class=" ">
     <ion-content padding="true" class="has-header">
-        <p id="uploadDocuments-markdown12" style="color:#000000;" class=" ">Upload your documents.</p>
-        <p id="uploadDocuments-markdown13" style="color:#000000;" class=" ">We need copies of few documents to get you started.</p>
-        <p id="uploadDocuments-markdown14" style="color:#000000;" class=" ">Please take a picture of each and upload them here</p>
-        <div class="list card " id="uploadDocuments-card22">
-            <ion-item class="item-icon-left  " id="uploadDocuments-list-item10">
-                <i class="icon ion-ionic"></i>Driver License</ion-item>
-            <div class="item item-body " id="uploadDocuments-list-item-container6">
-                <form id="uploadDocuments-form24" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input41">
-                        <span class="input-label">Expiry Date</span>
-                        <input type="date" placeholder="">
-                    </label>
-                </form>
-                <form id="uploadDocuments-form25" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input42">
-                        <span class="input-label">License #</span>
-                        <input type="text" placeholder="license number">
-                    </label>
-                </form>
-                <form id="uploadDocuments-form26" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input43">
-                        <span class="input-label">State</span>
-                        <input type="text" placeholder="">
-                    </label>
-                </form>
-                <button id="uploadDocuments-button34" class=" button button-balanced" ng-click="$parent.getDriverLicense()">Upload</button>
-                <a href="./home.html" id="uploadDocuments-button35" class=" button button-stable" target="_self">Cancel</a>
+        <div data-ng-hide="showUploadOption">
+            <p id="uploadDocuments-markdown12" style="color:#000000;">Upload your documents.</p>
+            <p id="uploadDocuments-markdown13" style="color:#000000;">We need copies of few documents to get you started.</p>
+            <p id="uploadDocuments-markdown14" style="color:#000000;">Please take a picture of each and upload them here</p>
+            <div class="list card " id="uploadDocuments-card22">
+                <ion-item class="item-icon-left  " id="uploadDocuments-list-item10">
+                    <i class="icon ion-ionic"></i>
+                    Driver License
+                </ion-item>
+                <div class="item item-body " id="uploadDocuments-list-item-container6">
+                    <div class="list">
+                        <form>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input41">
+                                <span class="input-label">Expiry Date</span>
+                                <input type="date" placeholder="" data-ng-model="$parent.license.expiry">
+                            </label>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input42">
+                                <span class="input-label">License #</span>
+                                <input type="text" placeholder="license number" data-ng-model="$parent.license.number">
+                            </label>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input43">
+                                <span class="input-label">State</span>
+                                <input type="text" placeholder="" data-ng-model="$parent.license.state">
+                            </label>
+                            <button id="uploadDocuments-button34" class="button button-stable" ng-click="$parent.getDriverLicense()">Browse image</button>
+                            <div class="ng-cloak" data-ng-show="$parent.licenseLoaded">
+                                <span data-ng-bind="$parent.licenseImgName"></span>
+                                <button class="button button-clear button-positive" data-ng-click="$parent.showLoadedImage()">Preview</button>
+                                <div style="text-align:center">
+                                    <button class="button button-calm" data-ng-click="$parent.uploadCurrentDocument()">Upload</button>
+                                    <button class="button button-stable" data-ng-click="$parent.cancelUpload()">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="list card " id="uploadDocuments-card122">
+                <ion-item class="item-icon-left  " id="uploadDocuments-list-item11">
+                    <i class="icon ion-ionic"></i>
+                    Vehicle Registration
+                </ion-item>
+                <div class="item item-body " id="uploadDocuments-list-item-container8">
+                    <div class="list">
+                        <form>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input31">
+                                <span class="input-label">Expiry Date</span>
+                                <input type="date" placeholder="" data-ng-model="$parent.registration.expiry">
+                            </label>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input38">
+                                <span class="input-label">VIN #</span>
+                                <input type="text" placeholder="vin number" data-ng-model="$parent.registration.vin">
+                            </label>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input39">
+                                <span class="input-label">State</span>
+                                <input type="text" placeholder="" data-ng-model="$parent.registration.state">
+                            </label>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input44">
+                                <span class="input-label">Car Make</span>
+                                <input type="text" placeholder="" data-ng-model="$parent.registration.carmake">
+                            </label>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input45">
+                                <span class="input-label">Car model</span>
+                                <input type="text" placeholder="" data-ng-model="$parent.registration.carmodel">
+                            </label>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input46">
+                                <span class="input-label">Car Year</span>
+                                <input type="month" placeholder="" data-ng-model="$parent.registration.caryear">
+                            </label>
+                            <button id="uploadDocuments-button36" class=" button button-balanced" ng-click="$parent.getVehicleRegistration()">Browse image</button>
+                            <div class="ng-cloak" data-ng-show="$parent.registrationLoaded">
+                                <span data-ng-bind="$parent.registrationImgName"></span>
+                                <button class="button button-clear button-positive" data-ng-click="$parent.showLoadedImage()">Preview</button>
+                                <div style="text-align:center">
+                                    <button class="button button-calm" data-ng-click="$parent.uploadCurrentDocument()">Upload</button>
+                                    <button class="button button-stable" data-ng-click="$parent.cancelUpload()">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="list card " id="uploadDocuments-card21">
+                <ion-item class="item-icon-left  " id="uploadDocuments-list-item14">
+                    <i class="icon ion-ionic"></i>
+                    Vehicle Insurance
+                </ion-item>
+                <div class="item item-body " id="uploadDocuments-list-item-container9">
+                    <div class="list">
+                        <form>
+                            <label class="item item-input item-stacked-label " id="uploadDocuments-input48">
+                                <span class="input-label">Expiry Date</span>
+                                <input type="date" placeholder="" data-ng-model="$parent.insurance.expiry">
+                            </label>
+                            <button id="uploadDocuments-button40" class=" button button-balanced" ng-click="$parent.getVehicleInsurance()">Browse image</button>
+                            <div class="ng-cloak" data-ng-show="$parent.insuranceLoaded">
+                                <span data-ng-bind="$parent.insuranceImgName"></span>
+                                <button class="button button-clear button-positive" data-ng-click="$parent.showLoadedImage()">Preview</button>
+                                <div style="text-align:center">
+                                    <button class="button button-calm" data-ng-click="$parent.uploadCurrentDocument()">Upload</button>
+                                    <button class="button button-stable" data-ng-click="$parent.cancelUpload()">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="list card " id="uploadDocuments-card122">
-            <ion-item class="item-icon-left  " id="uploadDocuments-list-item11">
-                <i class="icon ion-ionic"></i>
-                Vehicle Registration
-            </ion-item>
-            <div class="item item-body " id="uploadDocuments-list-item-container8">
-                <form id="uploadDocuments-form27" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input31">
-                        <span class="input-label">Expiry Date</span>
-                        <input type="date" placeholder="">
-                    </label>
-                </form>
-                <form id="uploadDocuments-form28" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input38">
-                        <span class="input-label">VIN #</span>
-                        <input type="text" placeholder="vin number">
-                    </label>
-                </form>
-                <form id="uploadDocuments-form29" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input39">
-                        <span class="input-label">State</span>
-                        <input type="text" placeholder="">
-                    </label>
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input44">
-                        <span class="input-label">Car Make</span>
-                        <input type="text" placeholder="">
-                    </label>
-                </form>
-                <form id="uploadDocuments-form30" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input45">
-                        <span class="input-label">Car model</span>
-                        <input type="text" placeholder="">
-                    </label>
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input46">
-                        <span class="input-label">Car Year</span>
-                        <input type="month" placeholder="">
-                    </label>
-                </form>
-                <button id="uploadDocuments-button36" class=" button button-balanced" ng-click="$parent.getVehicleRegistration()">Upload</button>
-                <a href="./home.html" target="_self" id="uploadDocuments-button37" class=" button button-stable">Cancel</a>
-            </div>
-        </div>
-        <div class="list card " id="uploadDocuments-card21">
-            <ion-item class="item-icon-left  " id="uploadDocuments-list-item14">
-                <i class="icon ion-ionic"></i>
-                Vehicle Insurance
-            </ion-item>
-            <div class="item item-body " id="uploadDocuments-list-item-container9">
-                <form id="uploadDocuments-form32" class="list ">
-                    <label class="item item-input item-stacked-label " id="uploadDocuments-input48">
-                        <span class="input-label">Expiry Date</span>
-                        <input type="date" placeholder="">
-                    </label>
-                </form>
-                <button id="uploadDocuments-button40" class=" button button-balanced" ng-click="$parent.getVehicleInsurance()">Upload</button>
-                <a href="./home.html" target="_self" id="uploadDocuments-button41" class=" button button-stable">Cancel</a>
-            </div>
+        <div data-ng-show="showUploadOption">
+            <img style="max-width:100%; margin:auto;" data-ng-src="{{$parent.imgData}}" alt="Loaded Image" />
+            <button data-ng-click="closePreview()" class="button button-clear button-positive">Close</button>
         </div>
     </ion-content>
 </ion-view>
