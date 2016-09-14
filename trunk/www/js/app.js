@@ -1,10 +1,41 @@
 /*global angular*/
+function refreshAccessToken() {
+    'use strict';
+    var authRefreshToken = localStorage.getItem('refresh_token'),
+        data = "grant_type=refresh_token&refresh_token=" + authRefreshToken + "&client_id=" + window.clientId,
+        http = new XMLHttpRequest();
+	http.open("POST", window.authServiceBase + 'token', true);
+	http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	http.onreadystatechange = function () {
+		if (http.readyState === 4) {
+            var response = '';
+            if (http.status === 200) {
+                response = JSON.parse(http.responseText);
+                localStorage.setItem('access_token', response.access_token);
+                localStorage.setItem('name', response.name);
+                localStorage.setItem('refresh_token', response.refresh_token);
+                localStorage.setItem("username", response.userName);
+            } else if (http.status === 400) {
+                response = JSON.parse(http.responseText);
+                document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
+                window.alert(response.error_description);
+                window.location.href = "./login.html";
+            } else {
+                document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
+                window.alert('Please check your network connection');
+            }
+		}
+	};
+	http.send(data);
+    window.setTimeout(refreshAccessToken, localStorage.getItem('expires_in'));
+}
 (function onInit() {
     'use strict';
     var locationPath, isAuth = localStorage.getItem("isAuth");
     if (typeof isAuth === "undefined") {
         locationPath = "./signup.html";
     } else if (isAuth === "true") {
+        refreshAccessToken();
         locationPath = "home.html#dashboard";
     } else {
         locationPath = "./login.html";
@@ -36,7 +67,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
     .constant('USER_ROLE', 1)
-    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE) {
+    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE, $interval) {
         'use strict';
         $rootScope.side_menu = document.getElementsByTagName("ion-side-menu")[0];
         $rootScope.userData = {
@@ -107,7 +138,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                         ]
                     };
 
-                    $http.post(API_SERVICE_BASE + 'api/v1/drivers', registrationBody,
+                    $http.post(API_SERVICE_BASE + 'api/v1/drivers', {},
                                {headers: { 'Authorization': 'Bearer ' + $rootScope.authData.token }}).then(function (response) {
                         $rootScope.driverData = response.data;
                         $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody,
