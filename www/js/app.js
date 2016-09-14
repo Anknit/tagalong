@@ -107,16 +107,18 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                         ]
                     };
 
-
-                    $http.post(API_SERVICE_BASE + 'api/v1/devices', registrationBody,
+                    $http.post(API_SERVICE_BASE + 'api/v1/drivers', registrationBody,
                                {headers: { 'Authorization': 'Bearer ' + $rootScope.authData.token }}).then(function (response) {
-                        $window.alert(response);
-                        $window.console.log(response);
-                    }, function () {
-                        
+                        $rootScope.driverData = response.data;
+                        $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody,
+                                   {headers: { 'Authorization': 'Bearer ' + $rootScope.authData.token }}).then(function (response) {
+                            window.alert('Device Registered successfully');
+                        }, function () {
+                            window.alert('Device registration failed');
+                        });
+                    }, function (response) {
+                        window.alert('Failed to get Driver Data');
                     });
-//                    $window.alert(data.registrationId);
-                    // data.registrationId
                 });
 
                 push.on('notification', function (data) {
