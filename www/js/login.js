@@ -22,6 +22,7 @@ function onLogin() {
             	localStorage.setItem('name',response.name);
             	localStorage.setItem('token_type',response.token_type);
             	localStorage.setItem('refresh_token',response.refresh_token);
+            	localStorage.setItem('expires_in',response.expires_in);
             	localStorage.setItem('token_expires',new Date(response['.expires']).getTime());
                 localStorage.setItem("username",response.userName);
                 localStorage.setItem("passwd",passwd);
