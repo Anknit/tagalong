@@ -2,6 +2,7 @@
 function refreshAccessToken() {
     'use strict';
     var authRefreshToken = localStorage.getItem('refresh_token'),
+        TokenRefreshTime = parseInt(localStorage.getItem('expires_in'), 10) * 60 * 1000,
         data = "grant_type=refresh_token&refresh_token=" + authRefreshToken + "&client_id=" + window.clientId,
         http = new XMLHttpRequest();
 	http.open("POST", window.authServiceBase + 'token', true);
@@ -17,17 +18,15 @@ function refreshAccessToken() {
                 localStorage.setItem("username", response.userName);
             } else if (http.status === 400) {
                 response = JSON.parse(http.responseText);
-                document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
                 window.alert(response.error_description);
                 window.location.href = "./login.html";
             } else {
-                document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
-                window.alert('Please check your network connection');
+                window.console.log('Failed to refresh access token');
             }
 		}
 	};
 	http.send(data);
-    window.setTimeout(refreshAccessToken, localStorage.getItem('expires_in'));
+    window.setTimeout(refreshAccessToken, TokenRefreshTime);
 }
 (function onInit() {
     'use strict';
