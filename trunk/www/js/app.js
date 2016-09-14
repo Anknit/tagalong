@@ -31,18 +31,20 @@ function formatLocalDate() {
 }
 var push;
 angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives'])
-    .constant('AUTH_SERVICE_BASE', 'http://devserver1.tisaaw.com:12102/')
-    .constant('API_SERVICE_BASE', 'http://devserver1.tisaaw.com:12101/')
+    .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
+    .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
+    .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
-    .constant('UPLOAD_URI', 'http://tagalongdocs.azurewebsites.net/api/documents/')
-    .constant('DEVICE_URI', 'http://tagalongdocs.azurewebsites.net/api/v1/devices/')
     .constant('USER_ROLE', 1)
-    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, DEVICE_URI) {
+    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE) {
         'use strict';
         $rootScope.side_menu = document.getElementsByTagName("ion-side-menu")[0];
         $rootScope.userData = {
             name: localStorage.getItem('name'),
             userName: localStorage.getItem('username')
+        };
+        $rootScope.authData = {
+            token: localStorage.getItem('access_token')
         };
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromParams) {
             if (toState.roles !== 3 && toState.roles !== USER_ROLE) {
@@ -95,7 +97,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                         "registration_id": data.registrationId,
                         "provider": "GCM",
                         "userName": $rootScope.userData.userName,
-                        "appVersion": "version1.0",
+                        "appVersion": "v1",
                         "dateAdded": formatLocalDate(),
                         "deviceInfo": [
                             {
@@ -106,7 +108,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     };
 
 
-                    $http.post(DEVICE_URI, registrationBody, {}).then(function (response) {
+                    $http.post(API_SERVICE_BASE + 'api/v1/devices', registrationBody,
+                               {headers: { 'Authorization': 'Bearer ' + $rootScope.authData.token }}).then(function (response) {
                         $window.alert(response);
                         $window.console.log(response);
                     }, function () {
