@@ -4,7 +4,24 @@
             <form id="dashboard-form11" class="list " style="top:-50px;">
                 <label class="item item-input" name="search-cur-loc">
                     <i class="icon ion-search placeholder-icon"></i>
-                    <input type="search" placeholder="Search at current location">
+                    <input vs-google-autocomplete ng-model="address.name"
+                 vs-place="address.place" 
+                 vs-place-id="address.components.placeId"
+                 vs-street-number="address.components.streetNumber" 
+                 vs-street="address.components.street"
+                 vs-city="address.components.city"
+                 vs-state="address.components.state"
+                 vs-country-short="address.components.countryCode"
+                 vs-country="address.components.country"
+                 vs-post-code="address.components.postCode"
+                 vs-district="address.components.district"
+                 vs-latitude="address.components.location.lat"
+                 vs-longitude="address.components.location.long"
+                 type="text" 
+                 name="address"
+                 id="address"
+                 class="form-control" 
+                 placeholder="Enter address">
                 </label>
             </form>
             <ion-toggle toggle-class="toggle-balanced" ng-checked="true" id="dashboard-toggle3" name="avail-delievery" class="" style="position:absolute;bottom:10px;left:10px;right:10px;">Available for delieveries</ion-toggle>

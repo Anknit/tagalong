@@ -2,9 +2,12 @@
 function refreshAccessToken() {
     'use strict';
     var authRefreshToken = localStorage.getItem('refresh_token'),
-        TokenRefreshTime = parseInt(localStorage.getItem('expires_in'), 10) * 60 * 1000,
+        TokenRefreshTime = 30 * 60 * 1000,
         data = "grant_type=refresh_token&refresh_token=" + authRefreshToken + "&client_id=" + window.clientId,
         http = new XMLHttpRequest();
+    if (localStorage.getItem('expires_in')) {
+        TokenRefreshTime = parseInt(localStorage.getItem('expires_in'), 10) * 60 * 1000;
+    }
 	http.open("POST", window.authServiceBase + 'token', true);
 	http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function () {
@@ -41,32 +44,20 @@ function refreshAccessToken() {
     }
     window.location.href = locationPath;
 }());
-function formatLocalDate() {
-    'use strict';
-    var now = new Date(),
-        tzo = -now.getTimezoneOffset(),
-        dif = tzo >= 0 ? '+' : '-',
-        pad = function (num) {
-            var norm = Math.abs(Math.floor(num));
-            return (norm < 10 ? '0' : '') + norm;
-        };
-    return now.getFullYear()
-        + '-' + pad(now.getMonth() + 1)
-        + '-' + pad(now.getDate())
-        + 'T' + pad(now.getHours())
-        + ':' + pad(now.getMinutes())
-        + ':' + pad(now.getSeconds())
-        + dif + pad(tzo / 60)
-        + ':' + pad(tzo % 60);
-}
 var push;
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives'])
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
     .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
+    .constant('PUSH_SENDER_ID', '406789023201')
     .constant('USER_ROLE', 1)
-    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE, $interval) {
+    .constant('APP_VERSION', 'v1')
+    .config(function ($httpProvider) {
+        'use strict';
+        $httpProvider.interceptors.push('authInterceptorService');
+    })
+    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE, $interval, pushNotificationService) {
         'use strict';
         $rootScope.side_menu = document.getElementsByTagName("ion-side-menu")[0];
         $rootScope.userData = {
@@ -110,60 +101,16 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 $window.StatusBar.styleDefault();
             }
             if ($window.PushNotification) {
-                push = $window.PushNotification.init({
-                    "android": {
-                        "senderID": "406789023201"
-                    },
-                    "ios": {
-                        "alert": "true",
-                        "badge": "true",
-                        "sound": "true"
-                    },
-                    "$windows": {}
+                pushNotificationService.init();
+                $rootScope.$on('gcm-registered', function (event, args) {
+                    pushNotificationService.attachToServer(args);
                 });
-
-                push.on('registration', function (data) {
-                    var registrationBody = {
-                        "registration_id": data.registrationId,
-                        "provider": "GCM",
-                        "userName": $rootScope.userData.userName,
-                        "appVersion": "v1",
-                        "dateAdded": formatLocalDate(),
-                        "deviceInfo": [
-                            {
-                                "key": "MobileOS",
-                                "value": "Android"
-                            }
-                        ]
-                    };
-
-                    $http.post(API_SERVICE_BASE + 'api/v1/drivers', {},
-                               {headers: { 'Authorization': 'Bearer ' + $rootScope.authData.token }}).then(function (response) {
-                        $rootScope.driverData = response.data;
-                        $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody,
-                                   {headers: { 'Authorization': 'Bearer ' + $rootScope.authData.token }}).then(function (response) {
-                            window.alert('Device Registered successfully');
-                        }, function () {
-                            window.alert('Device registration failed');
-                        });
-                    }, function (response) {
-                        window.alert('Failed to get Driver Data');
-                    });
-                });
-
-                push.on('notification', function (data) {
-                    $window.alert(data.message);
-                    // data.message,
-                    // data.title,
-                    // data.count,
-                    // data.sound,
-                    // data.image,
-                    // data.additionalData
-                });
-
-                push.on('error', function (e) {
-                    $window.alert(e.message);
-                });
+                $rootScope.$on('new-push-notification', function (event, args) {
+                    $window.console.log(args);
+                })
+                $rootScope.$on('push-notification-error', function (event, args) {
+                    $window.console.log(args);
+                })
             }
         });
     });
