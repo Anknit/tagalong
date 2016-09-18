@@ -12,6 +12,9 @@
                 longitude: 0
             }
         };
+        $scope.options = {
+            types: ['(cities)']
+        };
         document.addEventListener("deviceready", function () {
             var mapDiv = document.getElementById("map_canvas"),
                 map = $window.plugin.google.maps.Map.getMap(mapDiv, {
@@ -162,6 +165,7 @@
         function loadDocument(docType) {
             docMgrService.loadDocImage(function (imgUri) {
                 $scope.imgData = imgUri;
+                var imgName = imgUri.substr(imgUri.lastIndexOf('/') + 1);
                 $scope.licenseImgName = '';
                 $scope.insuranceImgName = '';
                 $scope.registrationImgName = '';
@@ -172,17 +176,17 @@
                 switch (docType) {
                 case 1:
                     $scope.licenseLoaded = true;
-                    $scope.licenseImgName = imgUri.substr(imgUri.lastIndexOf('/') + 1);
+                    $scope.licenseImgName = imgName;
                     additionalData = $scope.license;
                     break;
                 case 2:
                     $scope.registrationLoaded = true;
-                    $scope.registrationImgName = imgUri.substr(imgUri.lastIndexOf('/') + 1);
+                    $scope.registrationImgName = imgName;
                     additionalData = $scope.registration;
                     break;
                 case 3:
                     $scope.insuranceLoaded = true;
-                    $scope.insuranceImgName = imgUri.substr(imgUri.lastIndexOf('/') + 1);
+                    $scope.insuranceImgName = imgName;
                     additionalData = $scope.insurance;
                     break;
                 default:
