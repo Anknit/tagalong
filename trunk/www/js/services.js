@@ -242,7 +242,11 @@ angular.module('app.services', [])
         var authInterceptorServiceFactory = {},
             responseError = function (rejection) {
                 if (rejection.status === 401) {
-                    $location.href('./login.html');
+                    $window.localStorage.setItem("isAuth", "false");
+                    $window.localStorage.setItem("isRemember", "false");
+                    $window.localStorage.removeItem("username");
+                    $window.localStorage.removeItem("passwd");
+                    $window.location.href = "./index.html";
                 }
                 return $q.reject(rejection);
             },
