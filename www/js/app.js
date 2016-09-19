@@ -8,10 +8,10 @@ function refreshAccessToken() {
     if (localStorage.getItem('expires_in')) {
         TokenRefreshTime = parseInt(localStorage.getItem('expires_in'), 10) * 60 * 1000;
     }
-	http.open("POST", window.authServiceBase + 'token', true);
-	http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	http.onreadystatechange = function () {
-		if (http.readyState === 4) {
+    http.open("POST", window.authServiceBase + 'token', true);
+    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    http.onreadystatechange = function () {
+        if (http.readyState === 4) {
             var response = '';
             if (http.status === 200) {
                 response = JSON.parse(http.responseText);
@@ -26,9 +26,9 @@ function refreshAccessToken() {
             } else {
                 window.console.log('Failed to refresh access token');
             }
-		}
-	};
-	http.send(data);
+        }
+    };
+    http.send(data);
     window.setTimeout(refreshAccessToken, TokenRefreshTime);
 }
 (function onInit() {
@@ -57,7 +57,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
         'use strict';
         $httpProvider.interceptors.push('authInterceptorService');
     })
-    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE, $interval, pushNotificationService) {
+    .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE, $interval, pushNotificationService, $ionicModal) {
         'use strict';
         $rootScope.side_menu = document.getElementsByTagName("ion-side-menu")[0];
         $rootScope.userData = {
@@ -102,15 +102,29 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
             }
             if ($window.PushNotification) {
                 pushNotificationService.init();
+                $ionicModal.fromTemplateUrl('templates/notificationModal.html', {
+                    scope: $rootScope,
+                    animation:'fade-in-out'
+                }).then(function (modal) {
+                    $rootScope.notificationModal = modal;
+                });
                 $rootScope.$on('gcm-registered', function (event, args) {
                     pushNotificationService.attachToServer(args);
                 });
+                $rootScope.notifyAccept = function () {
+                    $window.alert('Notification Accepted');
+                };
+                $rootScope.notifyClose = function () {
+                    $rootScope.notificationModal.hide();
+                };
                 $rootScope.$on('new-push-notification', function (event, args) {
                     $window.console.log(args);
-                })
+                    $rootScope.notifyData = args;
+                    $rootScope.notificationModal.show();
+                });
                 $rootScope.$on('push-notification-error', function (event, args) {
                     $window.console.log(args);
-                })
+                });
             }
         });
     });
