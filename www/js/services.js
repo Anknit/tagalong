@@ -257,7 +257,7 @@ angular.module('app.services', [])
         'use strict';
         var driverRouteService = {},
             getDefinedRoutes = function (driverId) {
-                 return $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', {}).then(function () {
+                 return $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', {}).then(function (response) {
                     return response.data;
                 }, function (response) {
                     $window.alert('Failed to get routes');

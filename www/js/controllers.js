@@ -287,57 +287,58 @@ var map;
           { name: 'Sat', selected: false},
           { name: 'Sun', selected: false}
         ];
-        $scope.routeDateTime = '';
-        $scope.routeName = '';
-        $scope.fromaddress = {
-            name: '',
-            streetNumber: '',
-            street: '',
-            city: '',
-            state: '',
-            countryCode: '',
-            country: '',
-            postCode: '',
-            district: '',
-            location: {
-                lat: '',
-                long: ''
-            }
+        function resetScopeData () {
+            $scope.routeDateTime = '';
+            $scope.routeName = '';
+            $scope.fromaddress = {
+                name: '',
+                streetNumber: '',
+                street: '',
+                city: '',
+                state: '',
+                countryCode: '',
+                country: '',
+                postCode: '',
+                district: '',
+                location: {
+                    lat: '',
+                    long: ''
+                }
 
-        };
-        $scope.destaddress = {
-            name: '',
-            streetNumber: '',
-            street: '',
-            city: '',
-            state: '',
-            countryCode: '',
-            country: '',
-            postCode: '',
-            district: '',
-            location: {
-                lat: '',
-                long: ''
-            }
+            };
+            $scope.destaddress = {
+                name: '',
+                streetNumber: '',
+                street: '',
+                city: '',
+                state: '',
+                countryCode: '',
+                country: '',
+                postCode: '',
+                district: '',
+                location: {
+                    lat: '',
+                    long: ''
+                }
 
-        };
-        $scope.newroute = {
-            startaddress: {},
-            startDate: '',
-            startTime: '',
-            timeZone: '',
-            destaddress: {},
-            routeName:'',
-            recurrence: {
-                "daysOfMonth": [0],
-                "daysOfWeek": [0],
-                "recurrenceType": "daysOfWeek"
-            }
+            };
+            $scope.newroute = {
+                startaddress: {},
+                startDate: '',
+                startTime: '',
+                timeZone: '',
+                destaddress: {},
+                routeName:'',
+                recurrence: {
+                    "daysOfMonth": [0],
+                    "daysOfWeek": [0],
+                    "recurrenceType": "daysOfWeek"
+                }
 
-        };
-        // selected weekdays
-        $scope.selection = [];
-        $scope.recurrence = [];
+            };
+            $scope.recurrence = [];
+        }
+        
         $scope.driverRoutes = [];
         var driverId = $window.localStorage.getItem('driver-id');
         driverRouteService.getRoutes(driverId).then(function (response) {
@@ -388,6 +389,8 @@ var map;
                 }
             }
             driverRouteService.addRoute($scope.newroute, driverId).then(function (response) {
+                $scope.hideRouteForm();
+                resetScopeData();
                 driverRouteService.getRoutes(driverId).then(function (response) {
                     $scope.driverRoutes = response;
                 }, function() {
