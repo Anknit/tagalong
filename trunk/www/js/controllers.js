@@ -287,18 +287,113 @@ var map;
           { name: 'Sat', selected: false},
           { name: 'Sun', selected: false}
         ];
+        $scope.routeDateTime = '';
+        $scope.routeName = '';
+        $scope.fromaddress = {
+            name: '',
+            streetNumber: '',
+            street: '',
+            city: '',
+            state: '',
+            countryCode: '',
+            country: '',
+            postCode: '',
+            district: '',
+            location: {
+                lat: '',
+                long: ''
+            }
+
+        };
+        $scope.destaddress = {
+            name: '',
+            streetNumber: '',
+            street: '',
+            city: '',
+            state: '',
+            countryCode: '',
+            country: '',
+            postCode: '',
+            district: '',
+            location: {
+                lat: '',
+                long: ''
+            }
+
+        };
+        $scope.newroute = {
+            startaddress: {},
+            startDate: '',
+            startTime: '',
+            timeZone: '',
+            destaddress: {},
+            routeName:'',
+            recurrence: {
+                "daysOfMonth": [0],
+                "daysOfWeek": [0],
+                "recurrenceType": "daysOfWeek"
+            }
+
+        };
         // selected weekdays
         $scope.selection = [];
-        $scope.recurrence = [$scope.weekdays[0]];
+        $scope.recurrence = [];
         $scope.driverRoutes = [];
         var driverId = $window.localStorage.getItem('driver-id');
-        $scope.driverRoutes = driverRouteService.getRoutes(driverId);
+        driverRouteService.getRoutes(driverId).then(function (response) {
+            $scope.driverRoutes = response;
+        }, function() {
+            
+        });
         $scope.routeFormVisible = false;
         $scope.showRouteForm = function () {
             $scope.routeFormVisible = true;
         };
         $scope.hideRouteForm = function () {
             $scope.routeFormVisible = false;
+        };
+        $scope.submitNewRoute = function () {
+            if (angular.isDefined($scope.fromaddress.components.placeId)) {
+                $scope.newroute.startaddress.formattedAddress = $scope.fromaddress.name;
+                $scope.newroute.startaddress.address1 = $scope.fromaddress.components.streetNumber + ' ' + $scope.fromaddress.components.street;
+                $scope.newroute.startaddress.city = $scope.fromaddress.components.city;
+                $scope.newroute.startaddress.state = $scope.fromaddress.components.state;
+                $scope.newroute.startaddress.postalCode = $scope.fromaddress.components.postCode;
+                $scope.newroute.startaddress.countryCode = $scope.fromaddress.components.countryCode;
+            }
+            else {
+                $window.alert("Starting Address in not valid");
+                return;
+            }
+            if (angular.isDefined($scope.destaddress.components.placeId)) {
+                $scope.newroute.destaddress.formattedAddress = $scope.destaddress.name;
+                $scope.newroute.destaddress.address1 = $scope.destaddress.components.streetNumber + ' ' + $scope.destaddress.components.street;
+                $scope.newroute.destaddress.city = $scope.destaddress.components.city;
+                $scope.newroute.destaddress.state = $scope.destaddress.components.state;
+                $scope.newroute.destaddress.postalCode = $scope.destaddress.components.postCode;
+                $scope.newroute.destaddress.countryCode = $scope.destaddress.components.countryCode;
+            }
+            else {
+                $window.alert("Destination Address in not valid");
+                return;
+            }
+            $scope.newroute.startDate = $scope.routeDateTime;
+            $scope.newroute.startTime = $scope.routeDateTime.getHours() + ':' + $scope.routeDateTime.getMinutes();
+            $scope.newroute.timeZone = $scope.routeDateTime.getTimezoneOffset();
+            $scope.newroute.routeName = $scope.routeName;
+            if ($scope.recurrence.length > 0) {
+                $scope.newroute.recurrence.daysOfWeek = [];
+                for (var i=0; i<$scope.recurrence.length; i++ ) {
+                    $scope.newroute.recurrence.daysOfWeek.push($scope.recurrence[i]['name']);
+                }
+            }
+            driverRouteService.addRoute($scope.newroute, driverId).then(function (response) {
+                driverRouteService.getRoutes(driverId).then(function (response) {
+                    $scope.driverRoutes = response;
+                }, function() {
+
+                });
+            }, function () {});
         };
     }]);
     modCtrl.controller('trackingHomeCtrl', function ($scope) {});

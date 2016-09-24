@@ -26,25 +26,60 @@
             <form class="list ">
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Route Name</span>
-                    <input type="text" placeholder="">
+                    <input type="text" placeholder="" data-ng-model="$parent.routeName" />
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">From Address</span>
-                    <input type="text" placeholder="">
+                    <input  vs-google-autocomplete ng-model="fromaddress.name"
+                             vs-place="fromaddress.place" 
+                             vs-place-id="fromaddress.components.placeId"
+                             vs-street-number="fromaddress.components.streetNumber" 
+                             vs-street="fromaddress.components.street"
+                             vs-city="fromaddress.components.city"
+                             vs-state="fromaddress.components.state"
+                             vs-country-short="fromaddress.components.countryCode"
+                             vs-country="fromaddress.components.country"
+                             vs-post-code="fromaddress.components.postCode"
+                             vs-district="fromaddress.components.district"
+                             vs-latitude="fromaddress.components.location.lat"
+                             vs-longitude="fromaddress.components.location.long"
+                             type="text" 
+                             name="fromaddress"
+                             id="fromaddress"
+                             class="form-control" 
+                             placeholder="Enter address">
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">To Address</span>
-                    <input type="text" placeholder="">
+                    <input vs-google-autocomplete ng-model="destaddress.name"
+                             vs-place="destaddress.place" 
+                             vs-place-id="destaddress.components.placeId"
+                             vs-street-number="destaddress.components.streetNumber" 
+                             vs-street="destaddress.components.street"
+                             vs-city="destaddress.components.city"
+                             vs-state="destaddress.components.state"
+                             vs-country-short="destaddress.components.countryCode"
+                             vs-country="destaddress.components.country"
+                             vs-post-code="destaddress.components.postCode"
+                             vs-district="destaddress.components.district"
+                             vs-latitude="destaddress.components.location.lat"
+                             vs-longitude="destaddress.components.location.long"
+                             type="text" 
+                             name="destaddress"
+                             id="destaddress"
+                             class="form-control" 
+                             placeholder="Enter address">
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Date and Time</span>
-                    <input type="datetime" placeholder="">
+                    <input type="datetime-local" placeholder="" data-ng-model="$parent.routeDateTime">
                 </label>
-                <div class="item item-input">
+                <div class="item item-input item-select">
                     <span class="input-label">Recurrence</span>
                     <select multiple data-ng-model="recurrence" data-ng-options="item.name for item in weekdays">
                     </select>
                 </div>
+                <button type="button" class="button" data-ng-click="submitNewRoute();">Add</button>
             </form>
         </div>
     </ion-content>
