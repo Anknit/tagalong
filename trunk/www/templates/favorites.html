@@ -76,7 +76,7 @@
                 </label>
                 <div class="item item-input item-select">
                     <span class="input-label">Recurrence</span>
-                    <select multiple data-ng-model="recurrence" data-ng-options="item.name for item in weekdays">
+                    <select multiple data-ng-model="$parent.recurrence" data-ng-options="item.name for item in weekdays">
                     </select>
                 </div>
                 <button type="button" class="button" data-ng-click="submitNewRoute();">Add</button>
