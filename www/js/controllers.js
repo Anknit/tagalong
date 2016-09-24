@@ -385,7 +385,7 @@ var map;
             if ($scope.recurrence.length > 0) {
                 $scope.newroute.recurrence.daysOfWeek = [];
                 for (var i=0; i<$scope.recurrence.length; i++ ) {
-                    $scope.newroute.recurrence.daysOfWeek.push($scope.recurrence[i]['name']);
+                    $scope.newroute.recurrence.daysOfWeek.push({'day':$scope.recurrence[i]['name']});
                 }
             }
             driverRouteService.addRoute($scope.newroute, driverId).then(function (response) {
