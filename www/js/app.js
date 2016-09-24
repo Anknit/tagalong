@@ -108,7 +108,15 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     $rootScope.notificationModal = modal;
                 });
                 $rootScope.$on('gcm-registered', function (event, args) {
-                    pushNotificationService.attachToServer(args);
+                    var regId = $window.localStorage.getItem('gcm-register-id');
+                    var deviceId = $window.localStorage.getItem('driver-device-id');
+                    if (regId && deviceId) {
+                        if (regId !== args.registrationId) {
+                            pushNotificationService.attachToServer(args, true, deviceId);
+                        }
+                    } else {
+                        pushNotificationService.attachToServer(args);
+                    }
                 });
                 $rootScope.notifyAccept = function () {
                     $window.alert('Notification Accepted');
