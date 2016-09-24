@@ -140,7 +140,7 @@ angular.module('app.services', [])
                     $rootScope.$broadcast('push-notification-error');
                 });
             },
-            registerDeviceOnServer = function (data) {
+            registerDeviceOnServer = function (data, alreadyRegistered, deviceId) {
                 var registrationBody = {
                     "registration_id": data.registrationId,
                     "provider": "GCM",
@@ -156,11 +156,27 @@ angular.module('app.services', [])
                 };
                 $http.post(API_SERVICE_BASE + 'api/v1/drivers', {}, {}).then(function (response) {
                     $rootScope.driverData = response.data;
-                    $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody, {}).then(function (response) {
-                        window.alert('Device Registered successfully');
-                    }, function () {
-                        window.alert('Device registration failed');
-                    });
+                    $window.localStorage.setItem('driver-id', $rootScope.driverData.id);
+                    if (alreadyRegistered) {
+                        $http.put(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices/' + deviceId, registrationBody, {}).then(function (response) {
+                            window.alert('Device registration updated successfully');
+                            $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
+                        }, function () {
+                            window.alert('Device registration update failed');
+                        });
+                    } else {
+                        $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody, {}).then(function (response) {
+                            $window.alert('Device Registered successfully');
+                            $http.get(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', {}).then(function (response) {
+                                $window.localStorage.setItem('driver-device-id', response.data.deviceId);
+                            }, function (response) {
+                                $window.alert('Failed to get device id from server');
+                            });
+                            $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
+                        }, function () {
+                            $window.alert('Device registration failed');
+                        });
+                    }
                 }, function (response) {
                     window.alert('Failed to get Driver Data');
                 });
@@ -235,6 +251,20 @@ angular.module('app.services', [])
             }
         };
         return docService;
+    }])
+
+    .service('driverRouteService', ['$window', '$http', 'API_SERVICE_BASE', function ($window, $http, API_SERVICE_BASE) {
+        'use strict';
+        var driverRouteService = {},
+            getDefinedRoutes = function (driverId) {
+                 return $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', {}).then(function () {
+                    return response.data;
+                }, function (response) {
+                    $window.alert('Failed to get routes');
+                });
+            };
+        driverRouteService.getRoutes = getDefinedRoutes;
+        return driverRouteService;
     }])
 
     .service('authInterceptorService', ['$q', '$location', '$rootScope', '$window', function ($q, $location, $rootScope, $window) {

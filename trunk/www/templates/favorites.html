@@ -1,3 +1,51 @@
-<ion-view title="Favorites" id="page20" class=" ">
-    <ion-content padding="true" class="has-header"></ion-content>
+<ion-view title="Favorites" class=" ">
+    <ion-content padding="true" class="has-header">
+        <div data-ng-show="!routeFormVisible">
+            <h4>Added Routes</h4>
+            <div class="row">
+                <div class="col">Route Name</div>
+                <div class="col">Start Address</div>
+                <div class="col">Start Date and Time</div>
+                <div class="col">Dest. Address</div>
+                <div class="col"></div>
+            </div>
+            <div class="row" data-ng-repeat="route in driverRoutes">
+                <div class="col">{{ route.routeName }}</div>
+                <div class="col">{{ route.startAddress.address1 }}, {{ route.startAddress.city }}, {{ route.startAddress.stateOrProvinceCode }} {{ route.startAddress.postalCode }}</div>
+                <div class="col">{{ route.startDate}} -  {{ route.startTime}}</div>
+                <div class="col">{{ route.destAddress.address1 }}, {{ route.destAddress.city }}, {{ route.destAddress.stateOrProvinceCode }} {{ route.destAddress.postalCode }}</div>
+                <div class="col">
+                    <button type="button" class="button">Edit</button>
+                    <button type="button" class="button">Delete</button>
+                </div>
+            </div>
+            <button class="button" data-ng-click="showRouteForm();">Add New route</button>
+        </div>
+        <div data-ng-show="routeFormVisible">
+            <h4 style="color:#35BD71;" class=" ">New Route Details</h4>
+            <form class="list ">
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Route Name</span>
+                    <input type="text" placeholder="">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">From Address</span>
+                    <input type="text" placeholder="">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">To Address</span>
+                    <input type="text" placeholder="">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Date and Time</span>
+                    <input type="datetime" placeholder="">
+                </label>
+                <div class="item item-input">
+                    <span class="input-label">Recurrence</span>
+                    <select multiple data-ng-model="recurrence" data-ng-options="item.name for item in weekdays">
+                    </select>
+                </div>
+            </form>
+        </div>
+    </ion-content>
 </ion-view>

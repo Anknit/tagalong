@@ -277,7 +277,30 @@ var map;
     }]);
     modCtrl.controller('accountCtrl', function ($scope) {});
     modCtrl.controller('yourDetailsCtrl', function ($scope) {});
-    modCtrl.controller('favoritesCtrl', function ($scope) {});
+    modCtrl.controller('favoritesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {
+        $scope.weekdays = [
+          { name: 'Mon', selected: false},
+          { name: 'Tue', selected: false},
+          { name: 'Wed', selected: false},
+          { name: 'Thu', selected: false},
+          { name: 'Fri', selected: false},
+          { name: 'Sat', selected: false},
+          { name: 'Sun', selected: false}
+        ];
+        // selected weekdays
+        $scope.selection = [];
+        $scope.recurrence = [$scope.weekdays[0]];
+        $scope.driverRoutes = [];
+        var driverId = $window.localStorage.getItem('driver-id');
+        $scope.driverRoutes = driverRouteService.getRoutes(driverId);
+        $scope.routeFormVisible = false;
+        $scope.showRouteForm = function () {
+            $scope.routeFormVisible = true;
+        };
+        $scope.hideRouteForm = function () {
+            $scope.routeFormVisible = false;
+        };
+    }]);
     modCtrl.controller('trackingHomeCtrl', function ($scope) {});
     modCtrl.controller('trackingCtrl', function ($scope) {});
     modCtrl.controller('delieveryStatusCtrl', function ($scope) {});
