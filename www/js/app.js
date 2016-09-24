@@ -103,8 +103,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
             if ($window.PushNotification) {
                 pushNotificationService.init();
                 $ionicModal.fromTemplateUrl('templates/notificationModal.html', {
-                    scope: $rootScope,
-                    animation:'fade-in-out'
+                    scope: $rootScope
                 }).then(function (modal) {
                     $rootScope.notificationModal = modal;
                 });
@@ -112,17 +111,17 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     pushNotificationService.attachToServer(args);
                 });
                 $rootScope.notifyAccept = function () {
-                    map.setClickable(true);
                     $window.alert('Notification Accepted');
+                    $rootScope.notifyClose();
                 };
                 $rootScope.notifyClose = function () {
-                    map.setClickable(true);
+                    $window.map.setClickable(true);
                     $rootScope.notificationModal.hide();
                 };
                 $rootScope.$on('new-push-notification', function (event, args) {
                     $window.console.log(args);
                     $rootScope.notifyData = args;
-                    map.setClickable(false);
+                    $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
                 });
                 $rootScope.$on('push-notification-error', function (event, args) {

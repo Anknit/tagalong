@@ -246,6 +246,9 @@ angular.module('app.services', [])
                     $window.localStorage.setItem("isRemember", "false");
                     $window.localStorage.removeItem("username");
                     $window.localStorage.removeItem("passwd");
+                    if ($window.map) {
+                        $window.map.remove();
+                    }
                     $window.location.href = "./index.html";
                 }
                 return $q.reject(rejection);
