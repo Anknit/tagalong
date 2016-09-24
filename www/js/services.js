@@ -146,7 +146,7 @@ angular.module('app.services', [])
                     "provider": "GCM",
                     "userName": $rootScope.userData.userName,
                     "appVersion": APP_VERSION,
-                    "dateAdded": formatLocalDate(),
+                    "dateAdded": (new Date()).toISOString(),
                     "deviceInfo": [
                         {
                             "key": "MobileOS",
@@ -262,8 +262,16 @@ angular.module('app.services', [])
                 }, function (response) {
                     $window.alert('Failed to get routes');
                 });
+            },
+            addDriverRoute = function (routeData, driverId) {
+                return $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes' , routeData, {}).then(function (response) {
+                    return response.data;
+                }, function (error) {
+                    $window.console.log(error);
+                });
             };
         driverRouteService.getRoutes = getDefinedRoutes;
+        driverRouteService.addRoute = addDriverRoute;
         return driverRouteService;
     }])
 
