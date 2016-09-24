@@ -1,4 +1,5 @@
 /*global angular, dashboardCtrl, aboutCtrl, locationCtrl, contactCtrl, creditDebitCardCtrl, checkingAccountCtrl, paypalAccountCtrl, directAccountCtrl, uploadDocCtrl, settingsCtrl*/
+var map;
 (function (angular) {
     'use strict';
     var modCtrl = angular.module('app.controllers', []);
@@ -16,18 +17,18 @@
             types: ['(cities)']
         };
         document.addEventListener("deviceready", function () {
-            var mapDiv = document.getElementById("map_canvas"),
-                map = $window.plugin.google.maps.Map.getMap(mapDiv, {
-                    'mapType': $window.plugin.google.maps.MapTypeId.ROADMAP,
-                    'controls': {
-                        'myLocationButton': true,
-                        'zoom': true
-                    },
-                    'gestures': {
-                        'rotate': true,
-                        'zoom': true
-                    }
-                });
+            var mapDiv = document.getElementById("map_canvas");
+            map = $window.plugin.google.maps.Map.getMap(mapDiv, {
+                'mapType': $window.plugin.google.maps.MapTypeId.ROADMAP,
+                'controls': {
+                    'myLocationButton': true,
+                    'zoom': true
+                },
+                'gestures': {
+                    'rotate': true,
+                    'zoom': true
+                }
+            });
             map.setBackgroundColor('white');
             map.addEventListener($window.plugin.google.maps.event.MAP_READY, function () {
                 se_locationService.getPosition(function (response) {
