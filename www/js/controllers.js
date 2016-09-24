@@ -338,9 +338,9 @@ var map;
             };
             $scope.recurrence = [];
         }
-        
         $scope.driverRoutes = [];
         var driverId = $window.localStorage.getItem('driver-id');
+        resetScopeData();
         driverRouteService.getRoutes(driverId).then(function (response) {
             $scope.driverRoutes = response;
         }, function() {
