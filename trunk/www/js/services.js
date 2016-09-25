@@ -154,33 +154,26 @@ angular.module('app.services', [])
                         }
                     ]
                 };
-                $http.post(API_SERVICE_BASE + 'api/v1/drivers', {}, {}).then(function (response) {
-                    $rootScope.driverData = response.data;
-                    $window.localStorage.setItem('driver-id', $rootScope.driverData.id);
-                    if (alreadyRegistered) {
-                        $http.put(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices/' + deviceId, registrationBody, {}).then(function (response) {
-                            window.alert('Device registration updated successfully');
-                            $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
-                        }, function () {
-                            window.alert('Device registration update failed');
+                if (alreadyRegistered) {
+                    $http.put(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices/' + deviceId, registrationBody, {}).then(function (response) {
+                        window.alert('Device registration updated successfully');
+                        $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
+                    }, function () {
+                        window.alert('Device registration update failed');
+                    });
+                } else {
+                    $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody, {}).then(function (response) {
+                        $window.alert('Device Registered successfully');
+                        $http.get(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', {}).then(function (response) {
+                            $window.localStorage.setItem('driver-device-id', response.data.deviceId);
+                        }, function (response) {
+                            $window.alert('Failed to get device id from server');
                         });
-                    } else {
-                        $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody, {}).then(function (response) {
-                            $window.alert('Device Registered successfully');
-                            $http.get(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', {}).then(function (response) {
-                                $window.localStorage.setItem('driver-device-id', response.data.deviceId);
-                            }, function (response) {
-                                $window.alert('Failed to get device id from server');
-                            });
-                            $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
-                        }, function () {
-                            $window.alert('Device registration failed');
-                        });
-                    }
-                }, function (response) {
-                    window.alert('Failed to get Driver Data');
-                });
-                
+                        $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
+                    }, function () {
+                        $window.alert('Device registration failed');
+                    });
+                }
             };
         se_pushNotification.init = initPushService;
         se_pushNotification.attachToServer = registerDeviceOnServer;
@@ -257,14 +250,28 @@ angular.module('app.services', [])
         'use strict';
         var driverRouteService = {},
             getDefinedRoutes = function (driverId) {
-                 return $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', {}).then(function (response) {
+                return $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', {}).then(function (response) {
                     return response.data;
                 }, function (response) {
                     $window.alert('Failed to get routes');
                 });
             },
             addDriverRoute = function (routeData, driverId) {
-                return $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes' , routeData, {}).then(function (response) {
+                return $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', routeData, {}).then(function (response) {
+                    return response.data;
+                }, function (error) {
+                    $window.console.log(error);
+                });
+            },
+            editDriverRoute = function (routeData, driverId) {
+                return $http.put(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes/' + routeData.routeName, routeData, {}).then(function (response) {
+                    return response.data;
+                }, function (error) {
+                    $window.console.log(error);
+                });
+            },
+            removeDriverRoute = function (routeName, driverId) {
+                return $http.delete(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes/ ' + routeName, {}).then(function (response) {
                     return response.data;
                 }, function (error) {
                     $window.console.log(error);
@@ -272,6 +279,8 @@ angular.module('app.services', [])
             };
         driverRouteService.getRoutes = getDefinedRoutes;
         driverRouteService.addRoute = addDriverRoute;
+        driverRouteService.editRoute = editDriverRoute;
+        driverRouteService.deleteRoute = removeDriverRoute;
         return driverRouteService;
     }])
 

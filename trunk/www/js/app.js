@@ -67,6 +67,12 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
         $rootScope.authData = {
             token: localStorage.getItem('access_token')
         };
+        $http.post(API_SERVICE_BASE + 'api/v1/drivers', {}, {}).then(function (response) {
+            $rootScope.driverData = response.data;
+            $window.localStorage.setItem('driver-id', $rootScope.driverData.id);
+        }, function (response) {
+            window.alert('Failed to get Driver Data');
+        });
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromParams) {
             if (toState.roles !== 3 && toState.roles !== USER_ROLE) {
                 event.preventDefault();
@@ -108,8 +114,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     $rootScope.notificationModal = modal;
                 });
                 $rootScope.$on('gcm-registered', function (event, args) {
-                    var regId = $window.localStorage.getItem('gcm-register-id');
-                    var deviceId = $window.localStorage.getItem('driver-device-id');
+                    var regId = $window.localStorage.getItem('gcm-register-id'),
+                        deviceId = $window.localStorage.getItem('driver-device-id');
                     if (regId && deviceId) {
                         if (regId !== args.registrationId) {
                             pushNotificationService.attachToServer(args, true, deviceId);
@@ -127,10 +133,18 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     $rootScope.notificationModal.hide();
                 };
                 $rootScope.$on('new-push-notification', function (event, args) {
-                    $window.console.log(args);
-                    $rootScope.notifyData = args;
-                    $window.map.setClickable(false);
-                    $rootScope.notificationModal.show();
+                    var driverId = $window.localStorage.getItem('driver-id'),
+                        temp = new Date(),
+                        responseData = {
+                            "orderId": args.orderId || 0,
+                            "response": "Accepted",
+                            "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
+                        };
+                    $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
+                        
+                    }, function (error) {
+                        
+                    });
                 });
                 $rootScope.$on('push-notification-error', function (event, args) {
                     $window.console.log(args);
