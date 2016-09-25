@@ -3,7 +3,7 @@ var map;
 (function (angular) {
     'use strict';
     var modCtrl = angular.module('app.controllers', []);
-    modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window) {
+    modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', '$http', 'API_SERVICE_BASE', function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window, $http, API_SERVICE_BASE) {
         $rootScope.side_menu.style.display = "none";
         $rootScope.authSuccess = true;
         $rootScope.hideSplash = true;
@@ -13,8 +13,42 @@ var map;
                 longitude: 0
             }
         };
-        $scope.options = {
-            types: ['(cities)']
+        $scope.driverStatus = ($window.localStorage.getItem('driver-status') === "true") || false;
+        $scope.changeDriverStatus = function () {
+            var driverId = $window.localStorage.getItem('driver-id'),
+                temp,
+                statusData = {status: 'Unavailable', untill: ''};
+            $window.localStorage.setItem('driver-status', $scope.driverStatus);
+            if ($scope.driverStatus) {
+                statusData.status = 'Available';
+                $window.localStorage.removeItem('Driver-Unavailable-till');
+                if ($rootScope.statusChangeTimeout) {
+                    $window.clearTimeout($rootScope.statusChangeTimeout);
+                }
+            } else {
+                temp = new Date();
+                statusData.untill = new Date(temp.setHours(temp.getHours() + 1));
+            }
+            $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/status', statusData, {}).then(function (reponse) {
+                $rootScope.driverStatus = statusData;
+                if (statusData.status === 'Unavailable') {
+                    $window.localStorage.setItem('Driver-Unavailable-till', statusData.untill.getTime());
+                    $rootScope.statusChangeTimeout = $window.setTimeout(function () {
+                        if ($rootScope.driverStatus.status === 'Unavailable') {
+                            $rootScope.driverStatus.status = 'Available';
+                            $rootScope.driverStatus.untill = '';
+                            statusData = $rootScope.driverStatus;
+                            $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/status', statusData, {}).then(function (reponse) {
+                                $scope.driverStatus = true;
+                            }, function (error) {
+                                $window.console.log(error);
+                            });
+                        }
+                    }, (statusData.untill.getTime() - (new Date()).getTime()));
+                }
+            }, function (error) {
+                $window.console.log(error);
+            });
         };
         document.addEventListener("deviceready", function () {
             var mapDiv = document.getElementById("map_canvas");
@@ -279,17 +313,18 @@ var map;
     modCtrl.controller('yourDetailsCtrl', function ($scope) {});
     modCtrl.controller('favoritesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {
         $scope.weekdays = [
-          { name: 'Mon', selected: false},
-          { name: 'Tue', selected: false},
-          { name: 'Wed', selected: false},
-          { name: 'Thu', selected: false},
-          { name: 'Fri', selected: false},
-          { name: 'Sat', selected: false},
-          { name: 'Sun', selected: false}
+            { name: 'Mon', selected: false},
+            { name: 'Tue', selected: false},
+            { name: 'Wed', selected: false},
+            { name: 'Thu', selected: false},
+            { name: 'Fri', selected: false},
+            { name: 'Sat', selected: false},
+            { name: 'Sun', selected: false}
         ];
-        function resetScopeData () {
+        function resetScopeData() {
             $scope.routeDateTime = '';
             $scope.routeName = '';
+            $scope.routeEditMode = false;
             $scope.fromaddress = {
                 name: '',
                 streetNumber: '',
@@ -328,7 +363,7 @@ var map;
                 startTime: '',
                 timeZone: '',
                 destaddress: {},
-                routeName:'',
+                routeName: '',
                 recurrence: {
                     "daysOfMonth": [0],
                     "daysOfWeek": [0],
@@ -343,17 +378,43 @@ var map;
         resetScopeData();
         driverRouteService.getRoutes(driverId).then(function (response) {
             $scope.driverRoutes = response;
-        }, function() {
+        }, function () {
             
         });
         $scope.routeFormVisible = false;
+        $scope.routeEditMode = false;
         $scope.showRouteForm = function () {
             $scope.routeFormVisible = true;
         };
         $scope.hideRouteForm = function () {
             $scope.routeFormVisible = false;
         };
+        $scope.editRouteDetails = function (route) {
+            if (angular.isDefined(route.routeName)) {
+                $scope.routeDateTime = route.startDate;
+                $scope.routeName = route.routeName;
+                $scope.fromaddress.name = route.startAddress.formattedAddress;
+                $scope.destaddress.name = route.destAddress.formattedAddress;
+                $scope.routeEditMode = true;
+                $scope.showRouteForm();
+            }
+        };
+        $scope.deleteRoute = function (route) {
+            if (angular.isDefined(route.routeName)) {
+                driverRouteService.deleteRoute(route.routeName, driverId).then(function (response) {
+                    driverRouteService.getRoutes(driverId).then(function (response) {
+                        $scope.driverRoutes = response;
+                    }, function (error) {
+                        $window.console.log(error);
+                    });
+                }, function (error) {
+                    $window.console.log(error);
+                });
+            }
+        };
+        
         $scope.submitNewRoute = function () {
+            var i;
             if (angular.isDefined($scope.fromaddress.components.placeId)) {
                 $scope.newroute.startaddress.formattedAddress = $scope.fromaddress.name;
                 $scope.newroute.startaddress.address1 = $scope.fromaddress.components.streetNumber + ' ' + $scope.fromaddress.components.street;
@@ -361,8 +422,7 @@ var map;
                 $scope.newroute.startaddress.state = $scope.fromaddress.components.state;
                 $scope.newroute.startaddress.postalCode = $scope.fromaddress.components.postCode;
                 $scope.newroute.startaddress.countryCode = $scope.fromaddress.components.countryCode;
-            }
-            else {
+            } else {
                 $window.alert("Starting Address in not valid");
                 return;
             }
@@ -373,8 +433,7 @@ var map;
                 $scope.newroute.destaddress.state = $scope.destaddress.components.state;
                 $scope.newroute.destaddress.postalCode = $scope.destaddress.components.postCode;
                 $scope.newroute.destaddress.countryCode = $scope.destaddress.components.countryCode;
-            }
-            else {
+            } else {
                 $window.alert("Destination Address in not valid");
                 return;
             }
@@ -384,19 +443,31 @@ var map;
             $scope.newroute.routeName = $scope.routeName;
             if ($scope.recurrence.length > 0) {
                 $scope.newroute.recurrence.daysOfWeek = [];
-                for (var i=0; i<$scope.recurrence.length; i++ ) {
-                    $scope.newroute.recurrence.daysOfWeek.push({'day':$scope.recurrence[i]['name']});
+                for (i = 0; i < $scope.recurrence.length; i = i + 1) {
+                    $scope.newroute.recurrence.daysOfWeek.push({'day': $scope.recurrence[i].name});
                 }
             }
-            driverRouteService.addRoute($scope.newroute, driverId).then(function (response) {
-                $scope.hideRouteForm();
-                resetScopeData();
-                driverRouteService.getRoutes(driverId).then(function (response) {
-                    $scope.driverRoutes = response;
-                }, function() {
+            if ($scope.routeEditMode) {
+                driverRouteService.editRoute($scope.newroute, driverId).then(function (response) {
+                    $scope.hideRouteForm();
+                    resetScopeData();
+                    driverRouteService.getRoutes(driverId).then(function (response) {
+                        $scope.driverRoutes = response;
+                    }, function () {
 
-                });
-            }, function () {});
+                    });
+                }, function () {});
+            } else {
+                driverRouteService.addRoute($scope.newroute, driverId).then(function (response) {
+                    $scope.hideRouteForm();
+                    resetScopeData();
+                    driverRouteService.getRoutes(driverId).then(function (response) {
+                        $scope.driverRoutes = response;
+                    }, function () {
+
+                    });
+                }, function () {});
+            }
         };
     }]);
     modCtrl.controller('trackingHomeCtrl', function ($scope) {});
