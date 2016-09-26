@@ -1,38 +1,101 @@
-<ion-view title="OrderHome" id="page25" class=" ">
+<ion-view title="OrderHome">
     <ion-content padding="true" class="has-header">
-        <h4 id="orderHome-heading16" style="color:#35BD71;" class=" ">Schedule a delivery</h4>
-        <form id="orderHome-form22" class="list ">
-            <label class="item item-input item-stacked-label " id="orderHome-input28">
-                <span class="input-label">Pick up location</span>
-                <input type="text" placeholder="">
+        <h4 style="color:#35BD71;">Pickup Information</h4>
+        <form class="list">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Contact Name</span>
+                <input type="text" placeholder="" data-ng-model="order.pickupInfo.name" />
             </label>
-            <label class="item item-input item-stacked-label " id="orderHome-input29">
-                <span class="input-label">Dropoff location</span>
-                <input type="text" placeholder="">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Contact phone</span>
+                <input type="text" placeholder="" data-ng-model="order.pickupInfo.phone" />
+            </label>
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Email Address</span>
+                <input type="email" placeholder="" data-ng-model="order.pickupInfo.email" />
+            </label>
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Pickup location</span>
+                <input vs-google-autocomplete ng-model="order.pickupInfo.address.name"
+             vs-place="order.pickupInfo.address.place" 
+             vs-place-id="order.pickupInfo.address.components.placeId"
+             vs-street-number="order.pickupInfo.address.components.streetNumber" 
+             vs-street="order.pickupInfo.address.components.street"
+             vs-city="order.pickupInfo.address.components.city"
+             vs-state="order.pickupInfo.address.components.state"
+             vs-country-short="order.pickupInfo.address.components.countryCode"
+             vs-country="order.pickupInfo.address.components.country"
+             vs-post-code="order.pickupInfo.address.components.postCode"
+             vs-district="order.pickupInfo.address.components.district"
+             vs-latitude="order.pickupInfo.address.components.location.lat"
+             vs-longitude="order.pickupInfo.address.components.location.long"
+             type="text" 
+             name="address"
+             id="pickupaddress"
+             class="form-control" 
+             placeholder="Enter address"/>
             </label>
         </form>
-        <h5 id="orderHome-heading17" style="color:#000000;" class=" ">Delivery time window</h5>
-        <form id="orderHome-form31" class="list ">
-            <label class="item item-input " id="orderHome-input30">
-                <span class="input-label">Pickup time</span>
-                <input type="date" placeholder="">
+        <h4 style="color:#35BD71;">Delivery Information</h4>
+        <form class="list">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Contact Name</span>
+                <input type="text" placeholder="" data-ng-model="order.deliveryInfo.name" />
             </label>
-            <label class="item item-input " id="orderHome-input47">
-                <span class="input-label">Deliver time</span>
-                <input type="date" placeholder="">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Contact phone</span>
+                <input type="text" placeholder="" data-ng-model="order.deliveryInfo.phone" />
             </label>
-            <label class="item item-select " id="orderHome-select3">
-                <span class="input-label">Package size</span>
-                <select>
-                    <option>sdfsd</option>
-                    <option>sdfsd</option>
-                    <option>sdfsd</option>
-                    <option>sdfsd</option>
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Email Address</span>
+                <input type="email" placeholder="" data-ng-model="order.deliveryInfo.email" />
+            </label>
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Delivery location</span>
+                <input vs-google-autocomplete ng-model="order.deliveryInfo.address.name"
+             vs-place="order.deliveryInfo.address.place" 
+             vs-place-id="order.deliveryInfo.address.components.placeId"
+             vs-street-number="order.deliveryInfo.address.components.streetNumber" 
+             vs-street="order.deliveryInfo.address.components.street"
+             vs-city="order.deliveryInfo.address.components.city"
+             vs-state="order.deliveryInfo.address.components.state"
+             vs-country-short="order.deliveryInfo.address.components.countryCode"
+             vs-country="order.deliveryInfo.address.components.country"
+             vs-post-code="order.deliveryInfo.address.components.postCode"
+             vs-district="order.deliveryInfo.address.components.district"
+             vs-latitude="order.deliveryInfo.address.components.location.lat"
+             vs-longitude="order.deliveryInfo.address.components.location.long"
+             type="text" 
+             name="address"
+             id="deliveryaddress"
+             class="form-control" 
+             placeholder="Enter address"/>
+            </label>
+        </form>
+        <h5 style="color:#000000;" class="">Parcel Details</h5>
+        <form class="list ">
+            <label class="item item-input">
+                <span class="input-label">Pickup Date</span>
+                <input type="datetime-local" placeholder="" data-ng-model="newParcelInfo.pickupDate" />
+            </label>
+            <label class="item item-select">
+                <span class="input-label">Pickup Window</span>
+                <select data-ng-model="newParcelInfo.pickupWindow" data-ng-options="window.name for window in pickupWindow">
                 </select>
             </label>
-            <button id="orderHome-button38" class=" button button-dark  button-block button-outline icon-right ion-android-upload ">Upload picture of package</button>
+            <label class="item item-select">
+                <span class="input-label">Package size</span>
+                <select data-ng-model="newParcelInfo.parcelSize" data-ng-options="size.name for size in parcelSizes">
+                </select>
+            </label>
+<!--
+            <button class=" button button-dark  button-block button-outline icon-right ion-android-upload ">Upload picture of package</button>
+-->
             <ion-checkbox>Track status</ion-checkbox>
-            <a ui-sref="orderDetails" id="orderHome-button39" style="text-align:right;" class=" button button-positive  icon-right ion-android-arrow-dropright ">Proceed</a>
+            <a style="text-align:right;" class="button button-positive icon-right ion-android-arrow-dropright" data-ng-click="getOrderPrice();">Proceed</a>
+<!--
+            <a ui-sref="orderDetails" style="text-align:right;" class=" button button-positive icon-right ion-android-arrow-dropright ">Proceed</a>
+-->
         </form>
     </ion-content>
 </ion-view>

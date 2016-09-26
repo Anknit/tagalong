@@ -17,7 +17,10 @@ var map;
         $scope.changeDriverStatus = function () {
             var driverId = $window.localStorage.getItem('driver-id'),
                 temp,
-                statusData = {status: 'Unavailable', untill: ''};
+                statusData = {
+                    status: 'Unavailable',
+                    untill: ''
+                };
             $window.localStorage.setItem('driver-status', $scope.driverStatus);
             if ($scope.driverStatus) {
                 statusData.status = 'Available';
@@ -197,6 +200,7 @@ var map;
         $scope.insurance = {
             expiry: ''
         };
+
         function loadDocument(docType) {
             docMgrService.loadDocImage(function (imgUri) {
                 $scope.imgData = imgUri;
@@ -231,6 +235,7 @@ var map;
                 $scope.$digest();
             });
         }
+
         function uploadDocument() {
             docMgrService.uploadDocument($scope.imgData, additionalData, function (response) {
                 $scope.documents = response.collection.items;
@@ -313,14 +318,36 @@ var map;
     modCtrl.controller('yourDetailsCtrl', function ($scope) {});
     modCtrl.controller('favoritesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {
         $scope.weekdays = [
-            { name: 'Mon', selected: false},
-            { name: 'Tue', selected: false},
-            { name: 'Wed', selected: false},
-            { name: 'Thu', selected: false},
-            { name: 'Fri', selected: false},
-            { name: 'Sat', selected: false},
-            { name: 'Sun', selected: false}
+            {
+                name: 'Mon',
+                selected: false
+            },
+            {
+                name: 'Tue',
+                selected: false
+            },
+            {
+                name: 'Wed',
+                selected: false
+            },
+            {
+                name: 'Thu',
+                selected: false
+            },
+            {
+                name: 'Fri',
+                selected: false
+            },
+            {
+                name: 'Sat',
+                selected: false
+            },
+            {
+                name: 'Sun',
+                selected: false
+            }
         ];
+
         function resetScopeData() {
             $scope.routeDateTime = '';
             $scope.routeName = '';
@@ -379,7 +406,7 @@ var map;
         driverRouteService.getRoutes(driverId).then(function (response) {
             $scope.driverRoutes = response;
         }, function () {
-            
+
         });
         $scope.routeFormVisible = false;
         $scope.routeEditMode = false;
@@ -412,7 +439,7 @@ var map;
                 });
             }
         };
-        
+
         $scope.submitNewRoute = function () {
             var i;
             if (angular.isDefined($scope.fromaddress.components.placeId)) {
@@ -444,7 +471,9 @@ var map;
             if ($scope.recurrence.length > 0) {
                 $scope.newroute.recurrence.daysOfWeek = [];
                 for (i = 0; i < $scope.recurrence.length; i = i + 1) {
-                    $scope.newroute.recurrence.daysOfWeek.push({'day': $scope.recurrence[i].name});
+                    $scope.newroute.recurrence.daysOfWeek.push({
+                        'day': $scope.recurrence[i].name
+                    });
                 }
             }
             if ($scope.routeEditMode) {
@@ -473,7 +502,114 @@ var map;
     modCtrl.controller('trackingHomeCtrl', function ($scope) {});
     modCtrl.controller('trackingCtrl', function ($scope) {});
     modCtrl.controller('delieveryStatusCtrl', function ($scope) {});
-    modCtrl.controller('orderHomeCtrl', function ($scope) {});
+    modCtrl.controller('orderHomeCtrl', ['$scope', 'ordersService', '$window', '$location', function ($scope, ordersService, $window, $location) {
+        $scope.pickupWindow = [
+            {
+                name: 'Morning',
+                value: 'AM'
+            },
+            {
+                name: 'Afternoon',
+                value: 'PM'
+            },
+            {
+                name: 'Evening',
+                value: 'EV'
+            }
+        ];
+        $scope.parcelSizes = [
+            {
+                name: 'Small',
+                value: 'SM'
+            },
+            {
+                name: 'Medium',
+                value: 'MD'
+            },
+            {
+                name: 'Large',
+                value: 'LG'
+            },
+            {
+                name: 'Extra Large',
+                value: 'XL'
+            }
+        ];
+        function resetOrderData() {
+            $scope.newParcelInfo = {
+                pickupAddress: {},
+                deliveryAddress: {},
+                parcelSize: 'SM',
+                sKUCode: "S-2016",
+                productAttributeId: 6,
+                pickupWindow: 'PM',
+                pickupDate: "",
+                deliveryDate: ""
+            };
+            $scope.order = {
+                pickupInfo: {
+                    name: '',
+                    streetNumber: '',
+                    street: '',
+                    city: '',
+                    state: '',
+                    countryCode: '',
+                    country: '',
+                    postCode: '',
+                    district: '',
+                    location: {
+                        lat: '',
+                        long: ''
+                    }
+                },
+                deliveryInfo: {
+                    name: '',
+                    streetNumber: '',
+                    street: '',
+                    city: '',
+                    state: '',
+                    countryCode: '',
+                    country: '',
+                    postCode: '',
+                    district: '',
+                    location: {
+                        lat: '',
+                        long: ''
+                    }
+                }
+            };
+        }
+        resetOrderData();
+        $scope.getOrderPrice = function () {
+            if (angular.isDefined($scope.order.pickupInfo.placeId)) {
+                $scope.newParcelInfo.pickupAddress.formattedAddress = $scope.order.pickupInfo.name;
+                $scope.newParcelInfo.pickupAddress.address1 = $scope.order.pickupInfo.streetNumber + ' ' + $scope.order.pickupInfo.street;
+                $scope.newParcelInfo.pickupAddress.city = $scope.order.pickupInfo.city;
+                $scope.newParcelInfo.pickupAddress.state = $scope.order.pickupInfo.state;
+                $scope.newParcelInfo.pickupAddress.postalCode = $scope.order.pickupInfo.postCode;
+                $scope.newParcelInfo.pickupAddress.countryCode = $scope.order.pickupInfo.countryCode;
+            } else {
+                $window.alert('Please enter a valid pick up address');
+                return false;
+            }
+            if (angular.isDefined($scope.order.deliveryInfo.placeId)) {
+                $scope.newParcelInfo.deliveryAddress.formattedAddress = $scope.order.deliveryInfo.name;
+                $scope.newParcelInfo.deliveryAddress.address1 = $scope.order.deliveryInfo.streetNumber + ' ' + $scope.order.deliveryInfo.street;
+                $scope.newParcelInfo.deliveryAddress.city = $scope.order.deliveryInfo.city;
+                $scope.newParcelInfo.deliveryAddress.state = $scope.order.deliveryInfo.state;
+                $scope.newParcelInfo.deliveryAddress.postalCode = $scope.order.deliveryInfo.postCode;
+                $scope.newParcelInfo.deliveryAddress.countryCode = $scope.order.deliveryInfo.countryCode;
+            } else {
+                $window.alert('Please enter a valid delivery address');
+                return false;
+            }
+            ordersService.priceOrder($scope.newParcelInfo).then(function (response) {
+                $location.path('orderDetails');
+            }, function (error) {
+                $window.console.log('error');
+            });
+        };
+    }]);
     modCtrl.controller('orderDetailsCtrl', function ($scope) {});
     modCtrl.controller('paymentMethodCtrl', function ($scope) {});
     modCtrl.controller('orderConfirmationCtrl', function ($scope) {});
