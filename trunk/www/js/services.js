@@ -155,16 +155,16 @@ angular.module('app.services', [])
                     ]
                 };
                 if (alreadyRegistered) {
-                    $http.put(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices/' + deviceId, registrationBody, {}).then(function (response) {
+                    $http.put(API_SERVICE_BASE + 'api/v1/devices/' + deviceId, registrationBody, {}).then(function (response) {
                         window.alert('Device registration updated successfully');
                         $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
                     }, function () {
                         window.alert('Device registration update failed');
                     });
                 } else {
-                    $http.post(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', registrationBody, {}).then(function (response) {
+                    $http.post(API_SERVICE_BASE + 'api/v1/devices', registrationBody, {}).then(function (response) {
                         $window.alert('Device Registered successfully');
-                        $http.get(API_SERVICE_BASE + 'api/v1/devices/' + $rootScope.driverData.id + '/devices', {}).then(function (response) {
+                        $http.get(API_SERVICE_BASE + 'api/v1/devices', {}).then(function (response) {
                             $window.localStorage.setItem('driver-device-id', response.data.deviceId);
                         }, function (response) {
                             $window.alert('Failed to get device id from server');
@@ -284,6 +284,56 @@ angular.module('app.services', [])
         return driverRouteService;
     }])
 
+    .service('ordersService', ['$window', '$http', 'API_SERVICE_BASE', function ($window, $http, API_SERVICE_BASE) {
+        'use strict';
+        var ordersServiceFactory = {},
+            orders = {
+                shoppingCart: []
+            },
+            getOrders = function () {
+                return $http.get(API_SERVICE_BASE + 'api/v1/orders').then(function (results) {
+                    return results;
+                });
+            },
+            addToCart = function (orderData) {
+                return $http.post(API_SERVICE_BASE + 'api/v1/users/user/cart/', orderData).then(function (results) {
+                    return results;
+                });
+            },
+            submitOrder = function (orderData) {
+                return $http.post(API_SERVICE_BASE + 'api/v1/orders', orderData).then(function (results) {
+                    return results;
+                });
+            },
+            priceOrder = function (orderData) {
+                orders.shoppingCart.push({
+                    itemType: "Parcel",
+                    quantity: 1,
+                    product: {
+                        pickupAddress: orderData.pickupAddress,
+                        deliveryAddress: orderData.deliveryAddress,
+                        parcelType: "Parcel",
+                        skuCode: orderData.sKUCode,
+                        productAttributeId: orderData.productAttributeId
+                    },
+                    deliveryOptions: {
+                        pickupTimeSlot: orderData.pickupWindow
+                    }
+                });
+                return $http.post(API_SERVICE_BASE + 'api/v1/prices/orderprice', orders).then(function (results) {
+                    return results;
+                }, function (error) {
+                    $window.console.log(error);
+                });
+            };
+
+        ordersServiceFactory.getOrders = getOrders;
+        ordersServiceFactory.addToCart = addToCart;
+        ordersServiceFactory.submitOrder = submitOrder;
+        ordersServiceFactory.priceOrder = priceOrder;
+
+        return ordersServiceFactory;
+    }])
     .service('authInterceptorService', ['$q', '$location', '$rootScope', '$window', function ($q, $location, $rootScope, $window) {
         'use strict';
         var authInterceptorServiceFactory = {},
