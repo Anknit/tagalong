@@ -1,19 +1,23 @@
-<ion-view title="Order Details" id="page26" class=" ">
+<ion-view title="Order Details">
     <ion-content padding="true" class="has-header">
-        <div class="item item-body " id="orderDetails-list-item-container11">
-            <ion-list id="orderDetails-list6" class=" ">
-                <ion-item id="orderDetails-list-item12" class="  ">Order Details</ion-item>
+        <div class="item item-body ">
+            <ion-list>
+                <ion-item>Order Details</ion-item>
             </ion-list>
-            <h3 id="orderDetails-heading22" style="color:#000000;" class=" ">Pickup location:</h3>
-            <h3 id="orderDetails-heading24" style="color:#000000;" class=" ">Dropoff location:</h3>
+            <h3>Pickup location:</h3>
+            <p data-ng-bind="orderInfo.orderInfo.shoppingCart[0].product.pickupAddress"></p>
+            <h3>Dropoff location:</h3>
+            <p data-ng-bind="orderInfo.orderInfo.shoppingCart[0].product.deliveryAddress"></p>
         </div>
-        <div class="item item-body" id="orderDetails-list-item-container12">
-            <h3 id="orderDetails-heading25" style="color:#000000;" class=" ">Price:</h3>
-            <h3 id="orderDetails-heading26" style="color:#000000;" class=" ">Tax:</h3>
-            <h3 id="orderDetails-heading27" style="color:#000000;" class=" ">Order Total:</h3>
+        <div class="item item-body">
+            <h3>Delivery Charge:&nbsp;<span data-ng-bind="orderInfo.priceInfo.shippingCharge"></span></h3>
+            <h3>Tax:&nbsp;<span data-ng-bind="orderInfo.priceInfo.tax"></span></h3>
+            <h3>Order Total:&nbsp;<span data-ng-bind="orderInfo.priceInfo.orderTotal"></span></h3>
         </div>
+<!--
         <button id="orderDetails-button42" style="font-size:12px;" class=" button button-calm  button-block icon-left ion-android-add ">Add more packages to the same order</button>
-        <a ui-sref="orderHome" id="orderDetails-button44" class=" button button-positive  icon-left ion-android-arrow-dropleft "></a>
-        <a ui-sref="paymentMethod" id="orderDetails-button43" class=" button button-positive  icon-right ion-android-arrow-dropright ">Proceed to payment</a>
+-->
+        <a ui-sref="orderHome" class="button button-positive icon-left ion-android-arrow-dropleft">Go Back</a>
+        <a ui-sref="paymentMethod" class="button button-positive icon-right ion-android-arrow-dropright">Proceed to payment</a>
     </ion-content>
 </ion-view>

@@ -1,0 +1,45 @@
+<h4>Add a credit or debit card</h4>
+<p>We accepts American Express, Visa, Discover and Mastercard</p>
+<form class="list ">
+    <label class="item item-input item-stacked-label">
+        <span class="input-label">Card Type</span>
+        <select data-ng-model="$parent.addCard.cardType" data-ng-options="type.value as type.name for type in cardTypes"></select>
+    </label>
+    <label class="item item-input item-stacked-label ">
+        <span class="input-label">Card Number</span>
+        <input type="text" placeholder="card number" ng-model="$parent.addCard.cardNumber">
+    </label>
+    <label class="item item-input item-stacked-label ">
+        <span class="input-label">Security Code</span>
+        <input type="text" placeholder="CVV number" ng-model="$parent.addCard.securitycode">
+    </label>
+    <label class="item item-input item-stacked-label">
+        <span class="input-label">Expiration Date</span>
+        <input type="month" placeholder="" ng-model="$parent.addCard.cardExpiry">
+    </label>
+    <label class="item item-input item-stacked-label">
+        <span class="input-label">Name on card</span>
+        <input type="text" placeholder="Cardholder Name" ng-model="$parent.addCard.cardholderName">
+    </label>
+    <label class="item item-input item-stacked-label">
+        <span class="input-label">Billing Address</span>
+        <input vs-google-autocomplete ng-model="$parent.addCard.cardBillingAddress.address.name"
+             vs-place="$parent.addCard.cardBillingAddress.address.place" 
+             vs-place-id="$parent.addCard.cardBillingAddress.address.components.placeId"
+             vs-street-number="$parent.addCard.cardBillingAddress.address.components.streetNumber" 
+             vs-street="$parent.addCard.cardBillingAddress.address.components.street"
+             vs-city="$parent.addCard.cardBillingAddress.address.components.city"
+             vs-state="$parent.addCard.cardBillingAddress.address.components.state"
+             vs-country-short="$parent.addCard.cardBillingAddress.address.components.countryCode"
+             vs-country="$parent.addCard.cardBillingAddress.address.components.country"
+             vs-post-code="$parent.addCard.cardBillingAddress.address.components.postCode"
+             vs-district="$parent.addCard.cardBillingAddress.address.components.district"
+             vs-latitude="$parent.addCard.cardBillingAddress.address.components.location.lat"
+             vs-longitude="$parent.addCard.cardBillingAddress.address.components.location.long"
+             type="text" placeholder="address"/>
+    </label>
+    <div style="text-align:center;margin-top:10px;">
+        <button class="button button-balanced" ng-click="$parent.addCardDetails();">Confirm</button>
+        <button class="button button-stable" ng-click="$parent.cancelAddCard();">Cancel</button>
+    </div>
+</form>
