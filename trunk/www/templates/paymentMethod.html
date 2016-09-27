@@ -2,7 +2,9 @@
     <ion-content padding="true" class="has-header">
         <div class="item item-body">
             <form class="list">
-                <ion-radio data-ng-repeat="option in paymentOptions" name="payment-opt">{{option.Name}}</ion-radio>
+                <div data-ng-repeat="option in paymentOptions">
+                    <ion-radio name="payment-opt" ng-bind="option.friendlyName"></ion-radio>
+                </div>
             </form>
         </div>
         <a ui-sref="addOrderPayment" class=" button button-calm  button-block icon-left ion-android-add">Add a new payment method</a>

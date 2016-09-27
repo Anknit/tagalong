@@ -291,6 +291,7 @@ angular.module('app.services', [])
                 shoppingCart: []
             },
             price = {},
+            payMethod = {},
             getOrders = function () {
                 return $http.get(API_SERVICE_BASE + 'api/v1/orders').then(function (results) {
                     return results;
@@ -311,6 +312,10 @@ angular.module('app.services', [])
                     orderInfo: orders,
                     priceInfo: price
                 };
+            },
+            setPaymentMethod = function (methodData) {
+                payMethod = methodData;
+                return true;
             },
             priceOrder = function (orderData) {
                 orders.shoppingCart.push({
@@ -340,7 +345,8 @@ angular.module('app.services', [])
         ordersServiceFactory.submitOrder = submitOrder;
         ordersServiceFactory.priceOrder = priceOrder;
         ordersServiceFactory.orderInfo = orderInfo;
-
+        ordersServiceFactory.setPaymentMethod = setPaymentMethod;
+        
         return ordersServiceFactory;
     }])
 
@@ -355,6 +361,7 @@ angular.module('app.services', [])
                 });
             };
         paymentService.addPayMethod = addPaymentMethod;
+        return paymentService;
     }])
 
     .service('authInterceptorService', ['$q', '$location', '$rootScope', '$window', function ($q, $location, $rootScope, $window) {

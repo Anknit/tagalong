@@ -620,10 +620,15 @@ var map;
     modCtrl.controller('orderDetailsCtrl', ['$scope', 'ordersService', '$window', '$location', function ($scope, ordersService, $window, $location) {
         $scope.orderInfo = ordersService.orderInfo();
     }]);
-    modCtrl.controller('paymentMethodCtrl', function ($scope) {
+    modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', function ($scope, $http, API_SERVICE_BASE) {
         $scope.paymentOptions = [];
-    });
-    modCtrl.controller('addPaymentMethodCtrl', ['$scope', '$location', 'paymentService', '$filter', function ($scope, $location, paymentService, $filter) {
+        $http.get(API_SERVICE_BASE + '/api/v1/users/user', {}).then(function (response) {
+            $scope.paymentOptions = response.data.creditCards;
+        }, function () {
+            
+        })
+    }]);
+    modCtrl.controller('addPaymentMethodCtrl', ['$scope', '$location', 'paymentService', '$filter', 'ordersService', function ($scope, $location, paymentService, $filter, ordersService) {
         $scope.addCard = {
             cardNumber: '',
             securitycode: '',
@@ -639,28 +644,23 @@ var map;
                 securityCode: $scope.addCard.securitycode,
                 poNum: "default",
                 cardNumber: $scope.addCard.cardNumber,
-                cardType: "string",
+                cardType: $scope.addCard.cardType,
                 isEncrypted: true,
                 saveInProfile: true,
                 billingAddress: {
-                    address1: "string",
-                    address2: "string",
-                    city: "string",
-                    stateOrProvinceCode: "string",
-                    postalCode: "string",
-                    countryCode: "string",
-                    formattedAddress: "string",
-                    name: "string",
-                    contactNumber: "string",
-                    email: "string",
-                    company: "string",
-                    id: 0,
-                    url: "string"
+                    address1: $scope.addCard.cardBillingAddress.address.components.streetNumber + ' ' + $scope.addCard.cardBillingAddress.address.components.street,
+                    city: $scope.addCard.cardBillingAddress.address.components.city,
+                    stateOrProvinceCode: $scope.addCard.cardBillingAddress.address.components.state,
+                    postalCode: $scope.addCard.cardBillingAddress.address.components.postCode,
+                    countryCode: $scope.addCard.cardBillingAddress.address.components.countryCode,
+                    formattedAddress: $scope.addCard.cardBillingAddress.address.name,
                 }
             };
-            paymentService.addPayMethod().then(function (response) {
-                
-            }, function () {
+            paymentService.addPayMethod(payMethodObject).then(function (response) {
+                var payMethods = response.data.creditCards;
+                ordersService.setPaymentMethod(payMethods[payMethods.length - 1]);
+                $location.path('orderPayment');
+            }, function (error) {
                 
             });
         };
