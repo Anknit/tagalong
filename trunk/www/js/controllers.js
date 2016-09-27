@@ -506,14 +506,17 @@ var map;
         $scope.pickupWindow = [
             {
                 name: 'Morning',
+                slotValue: 1,
                 value: 'AM'
             },
             {
                 name: 'Afternoon',
+                slotValue: 2,
                 value: 'PM'
             },
             {
                 name: 'Evening',
+                slotValue: 3,
                 value: 'EV'
             }
         ];
@@ -539,10 +542,10 @@ var map;
             $scope.newParcelInfo = {
                 pickupAddress: {},
                 deliveryAddress: {},
-                parcelSize: 'SM',
+                parcelSize: $scope.parcelSizes[0].value,
                 sKUCode: "S-2016",
                 productAttributeId: 6,
-                pickupWindow: 'PM',
+                pickupWindow: $scope.pickupWindow[1].slotValue,
                 pickupDate: "",
                 deliveryDate: ""
             };
@@ -581,37 +584,90 @@ var map;
         }
         resetOrderData();
         $scope.getOrderPrice = function () {
-            if (angular.isDefined($scope.order.pickupInfo.placeId)) {
-                $scope.newParcelInfo.pickupAddress.formattedAddress = $scope.order.pickupInfo.name;
-                $scope.newParcelInfo.pickupAddress.address1 = $scope.order.pickupInfo.streetNumber + ' ' + $scope.order.pickupInfo.street;
-                $scope.newParcelInfo.pickupAddress.city = $scope.order.pickupInfo.city;
-                $scope.newParcelInfo.pickupAddress.state = $scope.order.pickupInfo.state;
-                $scope.newParcelInfo.pickupAddress.postalCode = $scope.order.pickupInfo.postCode;
-                $scope.newParcelInfo.pickupAddress.countryCode = $scope.order.pickupInfo.countryCode;
+            if (angular.isDefined($scope.order.pickupInfo.address.components.placeId)) {
+                $scope.newParcelInfo.pickupAddress.formattedAddress = $scope.order.pickupInfo.address.name;
+                $scope.newParcelInfo.pickupAddress.address1 = $scope.order.pickupInfo.address.streetNumber + ' ' + $scope.order.pickupInfo.address.street;
+                $scope.newParcelInfo.pickupAddress.city = $scope.order.pickupInfo.address.city;
+                $scope.newParcelInfo.pickupAddress.state = $scope.order.pickupInfo.address.state;
+                $scope.newParcelInfo.pickupAddress.postalCode = $scope.order.pickupInfo.address.postCode;
+                $scope.newParcelInfo.pickupAddress.countryCode = $scope.order.pickupInfo.address.countryCode;
             } else {
                 $window.alert('Please enter a valid pick up address');
                 return false;
             }
-            if (angular.isDefined($scope.order.deliveryInfo.placeId)) {
-                $scope.newParcelInfo.deliveryAddress.formattedAddress = $scope.order.deliveryInfo.name;
-                $scope.newParcelInfo.deliveryAddress.address1 = $scope.order.deliveryInfo.streetNumber + ' ' + $scope.order.deliveryInfo.street;
-                $scope.newParcelInfo.deliveryAddress.city = $scope.order.deliveryInfo.city;
-                $scope.newParcelInfo.deliveryAddress.state = $scope.order.deliveryInfo.state;
-                $scope.newParcelInfo.deliveryAddress.postalCode = $scope.order.deliveryInfo.postCode;
-                $scope.newParcelInfo.deliveryAddress.countryCode = $scope.order.deliveryInfo.countryCode;
+            if (angular.isDefined($scope.order.deliveryInfo.address.components.placeId)) {
+                $scope.newParcelInfo.deliveryAddress.formattedAddress = $scope.order.deliveryInfo.address.name;
+                $scope.newParcelInfo.deliveryAddress.address1 = $scope.order.deliveryInfo.address.streetNumber + ' ' + $scope.order.deliveryInfo.address.street;
+                $scope.newParcelInfo.deliveryAddress.city = $scope.order.deliveryInfo.address.city;
+                $scope.newParcelInfo.deliveryAddress.state = $scope.order.deliveryInfo.address.state;
+                $scope.newParcelInfo.deliveryAddress.postalCode = $scope.order.deliveryInfo.address.postCode;
+                $scope.newParcelInfo.deliveryAddress.countryCode = $scope.order.deliveryInfo.address.countryCode;
             } else {
                 $window.alert('Please enter a valid delivery address');
                 return false;
             }
             ordersService.priceOrder($scope.newParcelInfo).then(function (response) {
-                $location.path('orderDetails');
+                if (response.data) {
+                    $location.path('orderDetails');
+                } else {
+                    $window.alert('Failed to add product to cart');
+                }
             }, function (error) {
                 $window.console.log('error');
             });
         };
     }]);
-    modCtrl.controller('orderDetailsCtrl', function ($scope) {});
-    modCtrl.controller('paymentMethodCtrl', function ($scope) {});
+    modCtrl.controller('orderDetailsCtrl', ['$scope', 'ordersService', '$window', '$location', function ($scope, ordersService, $window, $location) {
+        $scope.orderInfo = ordersService.orderInfo();
+    }]);
+    modCtrl.controller('paymentMethodCtrl', function ($scope) {
+        $scope.paymentOptions = [];
+    });
+    modCtrl.controller('addPaymentMethodCtrl', ['$scope', '$location', 'paymentService', '$filter', function ($scope, $location, paymentService, $filter) {
+        $scope.addCard = {
+            cardNumber: '',
+            securitycode: '',
+            cardExpiry: '',
+            cardholderName: '',
+            cardBillingAddress: ''
+        };
+        $scope.addCardDetails = function () {
+            var payMethodObject = {
+                expireMonth: $filter('date')($scope.addCard.cardExpiry, 'MMMM'),
+                expireYear: $filter('date')($scope.addCard.cardExpiry, 'yyyy'),
+                cardHolderName: $scope.addCard.cardholderName,
+                securityCode: $scope.addCard.securitycode,
+                poNum: "default",
+                cardNumber: $scope.addCard.cardNumber,
+                cardType: "string",
+                isEncrypted: true,
+                saveInProfile: true,
+                billingAddress: {
+                    address1: "string",
+                    address2: "string",
+                    city: "string",
+                    stateOrProvinceCode: "string",
+                    postalCode: "string",
+                    countryCode: "string",
+                    formattedAddress: "string",
+                    name: "string",
+                    contactNumber: "string",
+                    email: "string",
+                    company: "string",
+                    id: 0,
+                    url: "string"
+                }
+            };
+            paymentService.addPayMethod().then(function (response) {
+                
+            }, function () {
+                
+            });
+        };
+        $scope.cancelAddCard = function () {
+            $location.path('paymentMethod');
+        };
+    }]);
     modCtrl.controller('orderConfirmationCtrl', function ($scope) {});
     modCtrl.controller('orderHistoryCtrl', function ($scope) {});
     modCtrl.controller('deliveriesHistoryCtrl', function ($scope) {});

@@ -290,6 +290,7 @@ angular.module('app.services', [])
             orders = {
                 shoppingCart: []
             },
+            price = {},
             getOrders = function () {
                 return $http.get(API_SERVICE_BASE + 'api/v1/orders').then(function (results) {
                     return results;
@@ -304,6 +305,12 @@ angular.module('app.services', [])
                 return $http.post(API_SERVICE_BASE + 'api/v1/orders', orderData).then(function (results) {
                     return results;
                 });
+            },
+            orderInfo = function () {
+                return {
+                    orderInfo: orders,
+                    priceInfo: price
+                };
             },
             priceOrder = function (orderData) {
                 orders.shoppingCart.push({
@@ -321,6 +328,7 @@ angular.module('app.services', [])
                     }
                 });
                 return $http.post(API_SERVICE_BASE + 'api/v1/prices/orderprice', orders).then(function (results) {
+                    price = results.data;
                     return results;
                 }, function (error) {
                     $window.console.log(error);
@@ -331,9 +339,24 @@ angular.module('app.services', [])
         ordersServiceFactory.addToCart = addToCart;
         ordersServiceFactory.submitOrder = submitOrder;
         ordersServiceFactory.priceOrder = priceOrder;
+        ordersServiceFactory.orderInfo = orderInfo;
 
         return ordersServiceFactory;
     }])
+
+    .service('paymentService', ['$window', '$http', 'API_SERVICE_BASE', function ($window, $http, API_SERVICE_BASE) {
+        'use strict';
+        var paymentService = {},
+            addPaymentMethod = function (payData) {
+                return $http.post(API_SERVICE_BASE + '/api/v1/users/user/creditcards', payData, {}).then(function (response) {
+                    return response;
+                }, function (error) {
+                    $window.console.log(error);
+                });
+            };
+        paymentService.addPayMethod = addPaymentMethod;
+    }])
+
     .service('authInterceptorService', ['$q', '$location', '$rootScope', '$window', function ($q, $location, $rootScope, $window) {
         'use strict';
         var authInterceptorServiceFactory = {},

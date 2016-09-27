@@ -159,6 +159,12 @@ angular.module('app.routes', [])
                 controller: 'paymentMethodCtrl',
                 roles: 3
             })
+            .state('addOrderPayment', {
+                url: '/addOrderPayment',
+                templateUrl: 'templates/addPaymentMethod.html',
+                controller: 'addPaymentMethodCtrl',
+                roles: 3
+            })
             .state('orderConfirmation', {
                 url: '/orderConfirmation',
                 templateUrl: 'templates/orderConfirmation.html',
