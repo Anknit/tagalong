@@ -67,9 +67,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
         $rootScope.authData = {
             token: localStorage.getItem('access_token')
         };
-        $http.post(API_SERVICE_BASE + 'api/v1/drivers', {}, {}).then(function (response) {
-            $rootScope.driverData = response.data;
-            $window.localStorage.setItem('driver-id', $rootScope.driverData.id);
+        $http.get(API_SERVICE_BASE + 'api/v1/users/user', {}, {}).then(function (response) {
+            $rootScope.user = response.data;
+            $window.localStorage.setItem('driver-id', $rootScope.user.userInfo[0].value);
         }, function (response) {
             window.alert('Failed to get Driver Data');
         });

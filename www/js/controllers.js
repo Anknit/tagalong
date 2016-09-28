@@ -415,6 +415,7 @@ var map;
         };
         $scope.hideRouteForm = function () {
             $scope.routeFormVisible = false;
+            resetScopeData();
         };
         $scope.editRouteDetails = function (route) {
             if (angular.isDefined(route.routeName)) {
