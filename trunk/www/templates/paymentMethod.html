@@ -3,18 +3,20 @@
         <div class="item item-body">
             <form class="list">
                 <div data-ng-repeat="option in paymentOptions">
-                    <ion-radio name="payment-opt" ng-bind="option.friendlyName"></ion-radio>
+                    <ion-radio name="payment-opt" data-ng-model="selectedPayOption.paymentMethodChoosen" data-ng-value="{{$index}}">{{option.friendlyName}}</ion-radio>
                 </div>
             </form>
         </div>
         <a ui-sref="addOrderPayment" class=" button button-calm  button-block icon-left ion-android-add">Add a new payment method</a>
+<!--
         <form class="list">
             <label class="item item-input">
                 <span class="input-label">Promotional Code</span>
                 <input type="text" placeholder="Enter">
             </label>
         </form>
+-->
         <a ui-sref="orderDetails" class=" button button-positive  icon-left ion-android-arrow-dropleft">Order Details</a>
-        <a ui-sref="orderConfirmation" class=" button button-positive  icon-right ion-android-arrow-dropright ">Submit Order</a>
+        <button data-ng-click="submitOrder()" class="button button-positive icon-right ion-android-arrow-dropright">Submit Order</button>
     </ion-content>
 </ion-view>
