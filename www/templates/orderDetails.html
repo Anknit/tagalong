@@ -5,9 +5,9 @@
                 <ion-item>Order Details</ion-item>
             </ion-list>
             <h3>Pickup location:</h3>
-            <p data-ng-bind="orderInfo.orderInfo.shoppingCart[0].product.pickupAddress"></p>
+            <p data-ng-bind="orderInfo.orderInfo.shoppingCart[0].product.pickupAddress.formattedAddress"></p>
             <h3>Dropoff location:</h3>
-            <p data-ng-bind="orderInfo.orderInfo.shoppingCart[0].product.deliveryAddress"></p>
+            <p data-ng-bind="orderInfo.orderInfo.shoppingCart[0].product.deliveryAddress.formattedAddress"></p>
         </div>
         <div class="item item-body">
             <h3>Delivery Charge:&nbsp;<span data-ng-bind="orderInfo.priceInfo.shippingCharge"></span></h3>

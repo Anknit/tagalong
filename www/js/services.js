@@ -292,6 +292,7 @@ angular.module('app.services', [])
             },
             price = {},
             payMethod = {},
+            userData = {},
             getOrders = function () {
                 return $http.get(API_SERVICE_BASE + 'api/v1/orders').then(function (results) {
                     return results;
@@ -302,9 +303,20 @@ angular.module('app.services', [])
                     return results;
                 });
             },
-            submitOrder = function (orderData) {
+            submitOrder = function () {
+                var orderData = {
+                    shoppingCart: orders.shoppingCart,
+                    paymentDetails: {
+                        paymentProfile: payMethod,
+                        paymentMethod: 'newPaymentMethod'
+                    },
+                    user: userData,
+                    createDate: new Date().toISOString()
+                };
                 return $http.post(API_SERVICE_BASE + 'api/v1/orders', orderData).then(function (results) {
                     return results;
+                }, function (error) {
+                    $window.console.log(error);
                 });
             },
             orderInfo = function () {
@@ -313,8 +325,12 @@ angular.module('app.services', [])
                     priceInfo: price
                 };
             },
-            setPaymentMethod = function (methodData) {
-                payMethod = methodData;
+            setPaymentMethod = function (paymethodData) {
+                payMethod = paymethodData;
+                return true;
+            },
+            setUserData = function (data) {
+                userData = data;
                 return true;
             },
             priceOrder = function (orderData) {
@@ -339,13 +355,13 @@ angular.module('app.services', [])
                     $window.console.log(error);
                 });
             };
-
         ordersServiceFactory.getOrders = getOrders;
         ordersServiceFactory.addToCart = addToCart;
         ordersServiceFactory.submitOrder = submitOrder;
         ordersServiceFactory.priceOrder = priceOrder;
         ordersServiceFactory.orderInfo = orderInfo;
         ordersServiceFactory.setPaymentMethod = setPaymentMethod;
+        ordersServiceFactory.setUserData = setUserData;
         
         return ordersServiceFactory;
     }])

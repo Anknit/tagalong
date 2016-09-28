@@ -586,22 +586,22 @@ var map;
         $scope.getOrderPrice = function () {
             if (angular.isDefined($scope.order.pickupInfo.address.components.placeId)) {
                 $scope.newParcelInfo.pickupAddress.formattedAddress = $scope.order.pickupInfo.address.name;
-                $scope.newParcelInfo.pickupAddress.address1 = $scope.order.pickupInfo.address.streetNumber + ' ' + $scope.order.pickupInfo.address.street;
-                $scope.newParcelInfo.pickupAddress.city = $scope.order.pickupInfo.address.city;
-                $scope.newParcelInfo.pickupAddress.state = $scope.order.pickupInfo.address.state;
-                $scope.newParcelInfo.pickupAddress.postalCode = $scope.order.pickupInfo.address.postCode;
-                $scope.newParcelInfo.pickupAddress.countryCode = $scope.order.pickupInfo.address.countryCode;
+                $scope.newParcelInfo.pickupAddress.address1 = $scope.order.pickupInfo.address.components.streetNumber + ' ' + $scope.order.pickupInfo.address.components.street;
+                $scope.newParcelInfo.pickupAddress.city = $scope.order.pickupInfo.address.components.city;
+                $scope.newParcelInfo.pickupAddress.state = $scope.order.pickupInfo.address.components.state;
+                $scope.newParcelInfo.pickupAddress.postalCode = $scope.order.pickupInfo.address.components.postCode;
+                $scope.newParcelInfo.pickupAddress.countryCode = $scope.order.pickupInfo.address.components.countryCode;
             } else {
                 $window.alert('Please enter a valid pick up address');
                 return false;
             }
             if (angular.isDefined($scope.order.deliveryInfo.address.components.placeId)) {
                 $scope.newParcelInfo.deliveryAddress.formattedAddress = $scope.order.deliveryInfo.address.name;
-                $scope.newParcelInfo.deliveryAddress.address1 = $scope.order.deliveryInfo.address.streetNumber + ' ' + $scope.order.deliveryInfo.address.street;
-                $scope.newParcelInfo.deliveryAddress.city = $scope.order.deliveryInfo.address.city;
-                $scope.newParcelInfo.deliveryAddress.state = $scope.order.deliveryInfo.address.state;
-                $scope.newParcelInfo.deliveryAddress.postalCode = $scope.order.deliveryInfo.address.postCode;
-                $scope.newParcelInfo.deliveryAddress.countryCode = $scope.order.deliveryInfo.address.countryCode;
+                $scope.newParcelInfo.deliveryAddress.address1 = $scope.order.deliveryInfo.address.components.streetNumber + ' ' + $scope.order.deliveryInfo.address.components.street;
+                $scope.newParcelInfo.deliveryAddress.city = $scope.order.deliveryInfo.address.components.city;
+                $scope.newParcelInfo.deliveryAddress.state = $scope.order.deliveryInfo.address.components.state;
+                $scope.newParcelInfo.deliveryAddress.postalCode = $scope.order.deliveryInfo.address.components.postCode;
+                $scope.newParcelInfo.deliveryAddress.countryCode = $scope.order.deliveryInfo.address.components.countryCode;
             } else {
                 $window.alert('Please enter a valid delivery address');
                 return false;
@@ -620,15 +620,128 @@ var map;
     modCtrl.controller('orderDetailsCtrl', ['$scope', 'ordersService', '$window', '$location', function ($scope, ordersService, $window, $location) {
         $scope.orderInfo = ordersService.orderInfo();
     }]);
-    modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', function ($scope, $http, API_SERVICE_BASE) {
+    modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', '$window', 'ordersService', function ($scope, $http, API_SERVICE_BASE, $window, ordersService) {
         $scope.paymentOptions = [];
+        $scope.selectedPayOption = {};
         $http.get(API_SERVICE_BASE + '/api/v1/users/user', {}).then(function (response) {
             $scope.paymentOptions = response.data.creditCards;
-        }, function () {
+            $scope.userData = {
+                id: response.data.id,
+                firstName: response.data.firstName,
+                lastName: response.data.lastName,
+                email: response.data.email,
+                mobileNumber: response.data.mobileNumber || '',
+                defaultAddress: response.data.defaultAddress || '',
+                contactPreferences: response.data.contactPreferences,
+                gender: response.data.gender || ''
+            };
+        }, function (error) {
             
-        })
+        });
+        $scope.submitOrder = function () {
+            if ($scope.paymentOptions.length > 0 && ($scope.selectedPayOption.paymentMethodChoosen >= 0)) {
+                ordersService.setPaymentMethod($scope.paymentOptions[$scope.selectedPayOption.paymentMethodChoosen]);
+                ordersService.setUserData($scope.userData);
+                ordersService.submitOrder().then(function () {
+                    
+                }, function(error) {
+                    
+                });
+/*
+                {shoppingCart
+                  
+                  "paymentDetails": {
+                    "cardInfo": {
+                      "expireMonth": "string",
+                      "expireYear": "string",
+                      "cardHolderName": "string",
+                      "securityCode": "string",
+                      "poNum": "string",
+                      "cardNumber": "string",
+                      "cardType": "string",
+                      "isEncrypted": true,
+                      "saveInProfile": true,
+                      "billingAddress": {
+                        "address1": "string",
+                        "address2": "string",
+                        "city": "string",
+                        "stateOrProvinceCode": "string",
+                        "postalCode": "string",
+                        "countryCode": "string",
+                        "formattedAddress": "string",
+                        "name": "string",
+                        "contactNumber": "string",
+                        "email": "string",
+                        "company": "string",
+                        "id": 0,
+                        "url": "string"
+                      }
+                    },
+                    "paymentProfile": {
+                      "paymentProfileId": "string",
+                      "customerProfileId": "string",
+                      "index": 0,
+                      "friendlyName": "string",
+                      "maskedName": "string",
+                      "billingAddress": {
+                        "address1": "string",
+                        "address2": "string",
+                        "city": "string",
+                        "stateOrProvinceCode": "string",
+                        "postalCode": "string",
+                        "countryCode": "string",
+                        "formattedAddress": "string",
+                        "name": "string",
+                        "contactNumber": "string",
+                        "email": "string",
+                        "company": "string",
+                        "id": 0,
+                        "url": "string"
+                      }
+                    },
+                    "paymentMethod": "string"
+                  },
+                  "user": {
+                    "id": 0,
+                    "firstName": "string",
+                    "lastName": "string",
+                    "email": "string",
+                    "mobileNumber": "string",
+                    "defaultAddress": {
+                      "address1": "string",
+                      "address2": "string",
+                      "city": "string",
+                      "stateOrProvinceCode": "string",
+                      "postalCode": "string",
+                      "countryCode": "string",
+                      "formattedAddress": "string",
+                      "name": "string",
+                      "contactNumber": "string",
+                      "email": "string",
+                      "company": "string",
+                      "id": 0,
+                      "url": "string"
+                    },
+                    "contactPreferences": {
+                      "email": true,
+                      "sms": true
+                    },
+                    "gender": "string"
+                  },
+                  "orderId": "string",
+                  "orderNumber": "string",
+                  "url": "string",
+                  "trackingNumber": "string",
+                  "createDate": "2016-09-27T16:56:25.367Z",
+                  "status": "string"
+                }                
+*/
+            } else {
+                $window.alert('Please choose a payment method');
+            }
+        };
     }]);
-    modCtrl.controller('addPaymentMethodCtrl', ['$scope', '$location', 'paymentService', '$filter', 'ordersService', function ($scope, $location, paymentService, $filter, ordersService) {
+    modCtrl.controller('addPaymentMethodCtrl', ['$scope', '$location', 'paymentService', '$filter', function ($scope, $location, paymentService, $filter) {
         $scope.addCard = {
             cardNumber: '',
             securitycode: '',
@@ -657,8 +770,6 @@ var map;
                 }
             };
             paymentService.addPayMethod(payMethodObject).then(function (response) {
-                var payMethods = response.data.creditCards;
-                ordersService.setPaymentMethod(payMethods[payMethods.length - 1]);
                 $location.path('orderPayment');
             }, function (error) {
                 
