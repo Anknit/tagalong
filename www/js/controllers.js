@@ -548,7 +548,13 @@ var map;
                 productAttributeId: 6,
                 pickupWindow: $scope.pickupWindow[1].slotValue,
                 pickupDate: "",
-                deliveryDate: ""
+                deliveryDate: "",
+                delivContactEmail: "",
+                delivContactNum: "",
+                delivName: "",
+                pickupContactEmail: "",
+                pickupContactNum: "",
+                pickupName: ""
             };
             $scope.order = {
                 pickupInfo: {
@@ -621,125 +627,55 @@ var map;
     modCtrl.controller('orderDetailsCtrl', ['$scope', 'ordersService', '$window', '$location', function ($scope, ordersService, $window, $location) {
         $scope.orderInfo = ordersService.orderInfo();
     }]);
-    modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', '$window', 'ordersService', function ($scope, $http, API_SERVICE_BASE, $window, ordersService) {
+    modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', '$window', 'ordersService', '$rootScope', function ($scope, $http, API_SERVICE_BASE, $window, ordersService, $rootScope) {
         $scope.paymentOptions = [];
         $scope.selectedPayOption = {};
-        $http.get(API_SERVICE_BASE + '/api/v1/users/user', {}).then(function (response) {
-            $scope.paymentOptions = response.data.creditCards;
-            $scope.userData = {
-                id: response.data.id,
-                firstName: response.data.firstName,
-                lastName: response.data.lastName,
-                email: response.data.email,
-                mobileNumber: response.data.mobileNumber || '',
-                defaultAddress: response.data.defaultAddress || '',
-                contactPreferences: response.data.contactPreferences,
-                gender: response.data.gender || ''
-            };
-        }, function (error) {
-            
-        });
+        if ($rootScope.newCardAdded) {
+            $scope.submitOrder();
+            $rootScope.newCardAdded = false;
+        } else {
+            $http.get(API_SERVICE_BASE + '/api/v1/users/user', {}).then(function (response) {
+                $scope.paymentOptions = response.data.creditCards;
+                $scope.userData = {
+                    id: response.data.id,
+                    firstName: response.data.firstName,
+                    lastName: response.data.lastName,
+                    email: response.data.email,
+                    mobileNumber: response.data.mobileNumber || '',
+                    defaultAddress: response.data.defaultAddress || '',
+                    contactPreferences: response.data.contactPreferences,
+                    gender: response.data.gender || ''
+                };
+            }, function (error) {
+
+            });
+        }
         $scope.submitOrder = function () {
-            if ($scope.paymentOptions.length > 0 && ($scope.selectedPayOption.paymentMethodChoosen >= 0)) {
-                ordersService.setPaymentMethod($scope.paymentOptions[$scope.selectedPayOption.paymentMethodChoosen]);
-                ordersService.setUserData($scope.userData);
-                ordersService.submitOrder().then(function () {
-                    
-                }, function(error) {
-                    
-                });
-/*
-                {shoppingCart
-                  
-                  "paymentDetails": {
-                    "cardInfo": {
-                      "expireMonth": "string",
-                      "expireYear": "string",
-                      "cardHolderName": "string",
-                      "securityCode": "string",
-                      "poNum": "string",
-                      "cardNumber": "string",
-                      "cardType": "string",
-                      "isEncrypted": true,
-                      "saveInProfile": true,
-                      "billingAddress": {
-                        "address1": "string",
-                        "address2": "string",
-                        "city": "string",
-                        "stateOrProvinceCode": "string",
-                        "postalCode": "string",
-                        "countryCode": "string",
-                        "formattedAddress": "string",
-                        "name": "string",
-                        "contactNumber": "string",
-                        "email": "string",
-                        "company": "string",
-                        "id": 0,
-                        "url": "string"
-                      }
-                    },
-                    "paymentProfile": {
-                      "paymentProfileId": "string",
-                      "customerProfileId": "string",
-                      "index": 0,
-                      "friendlyName": "string",
-                      "maskedName": "string",
-                      "billingAddress": {
-                        "address1": "string",
-                        "address2": "string",
-                        "city": "string",
-                        "stateOrProvinceCode": "string",
-                        "postalCode": "string",
-                        "countryCode": "string",
-                        "formattedAddress": "string",
-                        "name": "string",
-                        "contactNumber": "string",
-                        "email": "string",
-                        "company": "string",
-                        "id": 0,
-                        "url": "string"
-                      }
-                    },
-                    "paymentMethod": "string"
-                  },
-                  "user": {
-                    "id": 0,
-                    "firstName": "string",
-                    "lastName": "string",
-                    "email": "string",
-                    "mobileNumber": "string",
-                    "defaultAddress": {
-                      "address1": "string",
-                      "address2": "string",
-                      "city": "string",
-                      "stateOrProvinceCode": "string",
-                      "postalCode": "string",
-                      "countryCode": "string",
-                      "formattedAddress": "string",
-                      "name": "string",
-                      "contactNumber": "string",
-                      "email": "string",
-                      "company": "string",
-                      "id": 0,
-                      "url": "string"
-                    },
-                    "contactPreferences": {
-                      "email": true,
-                      "sms": true
-                    },
-                    "gender": "string"
-                  },
-                  "orderId": "string",
-                  "orderNumber": "string",
-                  "url": "string",
-                  "trackingNumber": "string",
-                  "createDate": "2016-09-27T16:56:25.367Z",
-                  "status": "string"
-                }                
-*/
+            var payData;
+            if ($rootScope.newCardAdded) {
+                payData = {
+                    cardInfo: $rootScope.newCardData,
+                    paymentMethod: 'NewCard'
+                };
             } else {
-                $window.alert('Please choose a payment method');
+                if ($scope.paymentOptions.length > 0 && ($scope.selectedPayOption.paymentMethodChoosen >= 0)) {
+                    payData = {
+                        cardInfo: {},
+                        paymentProfile: $scope.paymentOptions[$scope.selectedPayOption.paymentMethodChoosen],
+                        paymentMethod: 'ProfileCard'
+                    };
+                } else {
+                    $window.alert('Please choose a payment method');
+                    return true;
+                }
             }
+            ordersService.setPaymentMethod(payData);
+            ordersService.setUserData($scope.userData);
+            ordersService.submitOrder().then(function (response) {
+                $window.console.log(response);
+            }, function(error) {
+
+            });
         };
     }]);
     modCtrl.controller('addPaymentMethodCtrl', ['$scope', '$location', 'paymentService', '$filter', function ($scope, $location, paymentService, $filter) {
@@ -770,11 +706,15 @@ var map;
                     formattedAddress: $scope.addCard.cardBillingAddress.address.name,
                 }
             };
+/*
             paymentService.addPayMethod(payMethodObject).then(function (response) {
                 $location.path('orderPayment');
             }, function (error) {
                 
             });
+*/
+            paymentService.addPayMethod(payMethodObject);
+            $location.path('orderPayment');
         };
         $scope.cancelAddCard = function () {
             $location.path('paymentMethod');
