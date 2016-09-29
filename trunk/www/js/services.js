@@ -306,12 +306,11 @@ angular.module('app.services', [])
             submitOrder = function () {
                 var orderData = {
                     shoppingCart: orders.shoppingCart,
-                    paymentDetails: {
-                        paymentProfile: payMethod,
-                        paymentMethod: 'newPaymentMethod'
-                    },
+                    paymentDetails: payMethod,
                     user: userData,
-                    createDate: new Date().toISOString()
+                    createDate: new Date().toISOString(),
+                    orderStatus: "Added to Cart",
+                    recipient: {}
                 };
                 return $http.post(API_SERVICE_BASE + 'api/v1/orders', orderData).then(function (results) {
                     return results;
@@ -341,8 +340,18 @@ angular.module('app.services', [])
                         pickupAddress: orderData.pickupAddress,
                         deliveryAddress: orderData.deliveryAddress,
                         parcelType: "Parcel",
-                        skuCode: orderData.sKUCode,
-                        productAttributeId: orderData.productAttributeId
+                        productAttributeId: orderData.productAttributeId,
+                        parcelSize: orderData.parcelSize,
+                        sKUCode: orderData.sKUCode,
+                        productAttributeId: orderData.productAttributeId,
+                        pickupDate: orderData.pickupDate,
+                        deliveryDate: orderData.deliveryDate,
+                        delivContactEmail: orderData.delivContactEmail,
+                        delivContactNum: orderData.delivContactNum,
+                        delivName: orderData.delivName,
+                        pickupContactEmail: orderData.pickupContactEmail,
+                        pickupContactNum: orderData.pickupContactNum,
+                        pickupName: orderData.pickupName
                     },
                     deliveryOptions: {
                         pickupTimeSlot: orderData.pickupWindow
@@ -366,7 +375,7 @@ angular.module('app.services', [])
         return ordersServiceFactory;
     }])
 
-    .service('paymentService', ['$window', '$http', 'API_SERVICE_BASE', function ($window, $http, API_SERVICE_BASE) {
+    .service('paymentService', ['$window', '$http', 'API_SERVICE_BASE', '$rootScope', function ($window, $http, API_SERVICE_BASE, $rootScope) {
         'use strict';
         var paymentService = {},
             addPaymentMethod = function (payData) {
@@ -375,8 +384,15 @@ angular.module('app.services', [])
                 }, function (error) {
                     $window.console.log(error);
                 });
+            },
+            addPaymentDummy = function (payData) {
+                $rootScope.newCardData = payData;
+                $rootScope.newCardAdded = true;
             };
+/*  Dummy Till Fixed from server
         paymentService.addPayMethod = addPaymentMethod;
+*/
+        paymentService.addPayMethod = addPaymentDummy;
         return paymentService;
     }])
 
