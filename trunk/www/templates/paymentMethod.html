@@ -16,6 +16,14 @@
             </label>
         </form>
 -->
+        <div data-ng-show="$parent.newCardAdded" style="padding:15px;">
+            <h3 style="text-align:center;">Payment Details</h3>
+            <div>
+                <div>{{$parent.newCardData.cardType}}</div>
+                <div>{{$parent.newCardData.cardHolderName}}</div>
+                <div>{{$parent.newCardData.cardNumber}}</div>
+            </div>
+        </div>
         <a ui-sref="orderDetails" class=" button button-positive  icon-left ion-android-arrow-dropleft">Order Details</a>
         <button data-ng-click="submitOrder()" class="button button-positive icon-right ion-android-arrow-dropright">Submit Order</button>
     </ion-content>

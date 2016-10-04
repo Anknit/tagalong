@@ -307,8 +307,13 @@ angular.module('app.services', [])
                 var orderData = {
                     shoppingCart: orders.shoppingCart,
                     paymentDetails: payMethod,
+                    deliveryAddress: '',
+                    orderId:'',
+                    
+/*
                     user: userData,
                     createDate: new Date().toISOString(),
+*/
                     orderStatus: "Added to Cart",
                     recipient: {}
                 };
@@ -334,17 +339,21 @@ angular.module('app.services', [])
             },
             priceOrder = function (orderData) {
                 orders.shoppingCart.push({
+/*
                     itemType: "Parcel",
                     quantity: 1,
+*/
                     product: {
                         pickupAddress: orderData.pickupAddress,
                         deliveryAddress: orderData.deliveryAddress,
+/*
                         parcelType: "Parcel",
+*/
                         productAttributeId: orderData.productAttributeId,
                         parcelSize: orderData.parcelSize,
                         sKUCode: orderData.sKUCode,
-                        productAttributeId: orderData.productAttributeId,
                         pickupDate: orderData.pickupDate,
+                        pickupWindow: 'PM',
                         deliveryDate: orderData.deliveryDate,
                         delivContactEmail: orderData.delivContactEmail,
                         delivContactNum: orderData.delivContactNum,
@@ -352,10 +361,12 @@ angular.module('app.services', [])
                         pickupContactEmail: orderData.pickupContactEmail,
                         pickupContactNum: orderData.pickupContactNum,
                         pickupName: orderData.pickupName
-                    },
+                    }
+/*
                     deliveryOptions: {
                         pickupTimeSlot: orderData.pickupWindow
                     }
+*/
                 });
                 return $http.post(API_SERVICE_BASE + 'api/v1/prices/orderprice', orders).then(function (results) {
                     price = results.data;
@@ -426,3 +437,82 @@ angular.module('app.services', [])
         authInterceptorServiceFactory.responseError = responseError;
         return authInterceptorServiceFactory;
     }]);
+
+
+/*
+
+{"shoppingCart":[
+    {
+        "product": {
+            "pickupAddress":{
+                "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
+                "address1":"undefined undefined",
+                "city":"Noida",
+                "state":"UP",
+                "postalCode":"201303",
+                "countryCode":"IN"
+            },
+            "deliveryAddress":{
+                "formattedAddress":"Bhagawan Mahavir Marg, Varun Kunj, Rithala, Rohini, New Delhi, Delhi 110085, India",
+                "address1":"undefined Bhagawan Mahavir Marg",
+                "city":"New Delhi",
+                "state":"DL",
+                "postalCode":"110085",
+                "countryCode":"IN"
+            },
+            "parcelSize":"SM",
+            "sKUCode":"S-2016",
+            "productAttributeId":6,
+            "pickupWindow":"PM",
+            "pickupDate":"",
+            "deliveryDate":"",
+            "pickupName":"Ankit",
+            "pickupContactNum":9457192833,
+            "pickupContactEmail":"ankitakkii24@gmail.com",
+            "delivContactNum":7042206861,
+            "delivName":"Karishma",
+            "delivContactEmail":"abhishek@gmail.com"
+        }
+    }],
+    "deliveryAddress":"",
+    "paymentDetails":{
+        "cardInfo":{
+            "billingAddress":{
+                "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
+                "address1":"undefined undefined",
+                "city":"Noida",
+                "state":"UP",
+                "postalCode":"201303",
+                "countryCode":"IN"
+            },
+            "cardType":"VISA",
+            "cardNumber":"4111111111111111",
+            "securityCode":"999",
+            "expireMonth":"03",
+            "expireYear":"2019",
+            "cardHolderName":"Ankit Agarwal"
+        },
+        "paymentMethod":"NewCard",
+        "paymentProfile":{
+            "billingAddress":{
+                "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
+                "address1":"undefined undefined",
+                "city":"Noida",
+                "state":"UP",
+                "postalCode":"201303",
+                "countryCode":"IN"
+            },
+            "cardType":"VISA",
+            "cardNumber":"4111111111111111",
+            "securityCode":"999",
+            "expireMonth":"03",
+            "expireYear":"2019",
+            "cardHolderName":"Ankit Agarwal"
+        }
+    },
+    "recipient":{},
+    "orderId":"",
+    "orderStatus":"Added to Cart"
+}
+
+*/

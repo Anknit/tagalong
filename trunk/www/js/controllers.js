@@ -546,7 +546,7 @@ var map;
                 parcelSize: $scope.parcelSizes[0].value,
                 sKUCode: "S-2016",
                 productAttributeId: 6,
-                pickupWindow: $scope.pickupWindow[1].slotValue,
+                pickupWindow: $scope.pickupWindow[1].value,
                 pickupDate: "",
                 deliveryDate: "",
                 delivContactEmail: "",
@@ -627,7 +627,7 @@ var map;
     modCtrl.controller('orderDetailsCtrl', ['$scope', 'ordersService', '$window', '$location', function ($scope, ordersService, $window, $location) {
         $scope.orderInfo = ordersService.orderInfo();
     }]);
-    modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', '$window', 'ordersService', '$rootScope', function ($scope, $http, API_SERVICE_BASE, $window, ordersService, $rootScope) {
+    modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', '$window', 'ordersService', '$rootScope', '$location', function ($scope, $http, API_SERVICE_BASE, $window, ordersService, $rootScope, $location) {
         $scope.paymentOptions = [];
         $scope.selectedPayOption = {};
         if ($rootScope.newCardAdded) {
@@ -655,7 +655,8 @@ var map;
             if ($rootScope.newCardAdded) {
                 payData = {
                     cardInfo: $rootScope.newCardData,
-                    paymentMethod: 'NewCard'
+                    paymentMethod: 'NewCard',
+                    paymentProfile: $rootScope.newCardData
                 };
             } else {
                 if ($scope.paymentOptions.length > 0 && ($scope.selectedPayOption.paymentMethodChoosen >= 0)) {
@@ -672,9 +673,9 @@ var map;
             ordersService.setPaymentMethod(payData);
             ordersService.setUserData($scope.userData);
             ordersService.submitOrder().then(function (response) {
-                $window.console.log(response);
+                $location.path('orderConfirmation');
             }, function(error) {
-
+                $window.alert('Failed to submit order');
             });
         };
     }]);
@@ -688,19 +689,23 @@ var map;
         };
         $scope.addCardDetails = function () {
             var payMethodObject = {
-                expireMonth: $filter('date')($scope.addCard.cardExpiry, 'MMMM'),
+                expireMonth: $filter('date')($scope.addCard.cardExpiry, 'MM'),
                 expireYear: $filter('date')($scope.addCard.cardExpiry, 'yyyy'),
                 cardHolderName: $scope.addCard.cardholderName,
                 securityCode: $scope.addCard.securitycode,
+/*
                 poNum: "default",
+*/
                 cardNumber: $scope.addCard.cardNumber,
                 cardType: $scope.addCard.cardType,
+/*
                 isEncrypted: true,
                 saveInProfile: true,
+*/
                 billingAddress: {
                     address1: $scope.addCard.cardBillingAddress.address.components.streetNumber + ' ' + $scope.addCard.cardBillingAddress.address.components.street,
                     city: $scope.addCard.cardBillingAddress.address.components.city,
-                    stateOrProvinceCode: $scope.addCard.cardBillingAddress.address.components.state,
+                    state: $scope.addCard.cardBillingAddress.address.components.state,
                     postalCode: $scope.addCard.cardBillingAddress.address.components.postCode,
                     countryCode: $scope.addCard.cardBillingAddress.address.components.countryCode,
                     formattedAddress: $scope.addCard.cardBillingAddress.address.name,
