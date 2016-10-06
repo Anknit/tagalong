@@ -114,25 +114,13 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     $rootScope.notificationModal = modal;
                 });
                 $rootScope.$on('gcm-registered', function (event, args) {
-                    var regId = $window.localStorage.getItem('gcm-register-id'),
-                        deviceId = $window.localStorage.getItem('driver-device-id');
-                    if (regId && deviceId) {
-                        if (regId !== args.registrationId) {
-                            pushNotificationService.attachToServer(args, true, deviceId);
-                        }
+                    var regId = $window.localStorage.getItem('gcm-register-id');
+                    if (regId && (regId === args.registrationId)) {
                     } else {
                         pushNotificationService.attachToServer(args);
                     }
                 });
                 $rootScope.notifyAccept = function () {
-                    $window.alert('Notification Accepted');
-                    $rootScope.notifyClose();
-                };
-                $rootScope.notifyClose = function () {
-                    $window.map.setClickable(true);
-                    $rootScope.notificationModal.hide();
-                };
-                $rootScope.$on('new-push-notification', function (event, args) {
                     var driverId = $window.localStorage.getItem('driver-id'),
                         temp = new Date(),
                         responseData = {
@@ -141,10 +129,36 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
                     $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
-                        
+                        $rootScope.notifyClose();
                     }, function (error) {
-                        
+                        $window.alert('Failed to send response');
+                        $rootScope.notifyClose();
                     });
+                };
+                $rootScope.notifyDecline = function () {
+                    var driverId = $window.localStorage.getItem('driver-id'),
+                        temp = new Date(),
+                        responseData = {
+                            "orderId": args.orderId || 0,
+                            "response": "Rejected",
+                            "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
+                        };
+                    $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
+                        $rootScope.notifyClose();
+                    }, function (error) {
+                        $window.alert('Failed to send response');
+                        $rootScope.notifyClose();
+                    });
+                };
+                $rootScope.notifyClose = function () {
+                    $window.map.setClickable(true);
+                    $rootScope.notificationModal.hide();
+                };
+                $rootScope.$on('new-push-notification', function (event, args) {
+                    $window.console.log(args);
+                    $rootScope.notifyData = args;
+                    map.setClickable(false);
+                    $rootScope.notificationModal.show();
                 });
                 $rootScope.$on('push-notification-error', function (event, args) {
                     $window.console.log(args);

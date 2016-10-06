@@ -32,6 +32,7 @@ ion-list.manual-list-fullwidth div.list > .item, .list.card.manual-card-fullwidt
     bottom: 0px;
     right: 0px;
     margin:auto;
+    width:80%;
 }
 .loading-blocker{
     position: fixed;
