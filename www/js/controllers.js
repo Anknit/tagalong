@@ -13,7 +13,12 @@ var map;
                 longitude: 0
             }
         };
-        $scope.driverStatus = ($window.localStorage.getItem('driver-status') === "true") || false;
+        var driverId = $window.localStorage.getItem('driver-id');
+        $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
+            $scope.driverStatus = response.status;
+        }, function (error) {
+            $scope.driverStatus = ($window.localStorage.getItem('driver-status') === "true") || true;
+        })
         $scope.changeDriverStatus = function () {
             var driverId = $window.localStorage.getItem('driver-id'),
                 temp,
