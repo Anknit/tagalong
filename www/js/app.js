@@ -116,15 +116,19 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 $rootScope.$on('gcm-registered', function (event, args) {
                     var regId = $window.localStorage.getItem('gcm-register-id');
                     if (regId && (regId === args.registrationId)) {
+                        // do nothing
+                        $window.console.log('Same GCM Reg ID');
                     } else {
                         pushNotificationService.attachToServer(args);
                     }
                 });
                 $rootScope.notifyAccept = function () {
-                    var driverId = $window.localStorage.getItem('driver-id'),
+                    var rootScope = this,
+                        args = $rootScope.notifyData,
+                        driverId = $window.localStorage.getItem('driver-id'),
                         temp = new Date(),
                         responseData = {
-                            "orderId": args.orderId || 0,
+                            "orderId": args.additionalData.orderId || 0,
                             "response": "Accepted",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
@@ -136,10 +140,12 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     });
                 };
                 $rootScope.notifyDecline = function () {
-                    var driverId = $window.localStorage.getItem('driver-id'),
+                    var rootScope = this,
+                        args = $rootScope.notifyData,
+                        driverId = $window.localStorage.getItem('driver-id'),
                         temp = new Date(),
                         responseData = {
-                            "orderId": args.orderId || 0,
+                            "orderId": args.additionalData.orderId || 0,
                             "response": "Rejected",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
@@ -151,13 +157,13 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     });
                 };
                 $rootScope.notifyClose = function () {
-                    $window.map.setClickable(true);
                     $rootScope.notificationModal.hide();
+                    $window.map.setClickable(true);
                 };
                 $rootScope.$on('new-push-notification', function (event, args) {
                     $window.console.log(args);
                     $rootScope.notifyData = args;
-                    map.setClickable(false);
+                    $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
                 });
                 $rootScope.$on('push-notification-error', function (event, args) {
