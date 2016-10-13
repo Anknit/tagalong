@@ -163,14 +163,6 @@ angular.module('app.services', [])
                     });
                 } else {
                     $http.post(API_SERVICE_BASE + 'api/v1/devices', registrationBody, {}).then(function (response) {
-/*
-                        $window.alert('Device Registered successfully');
-                        $http.get(API_SERVICE_BASE + 'api/v1/devices', {}).then(function (response) {
-                            $window.localStorage.setItem('driver-device-id', response.data.deviceId);
-                        }, function (response) {
-                            $window.alert('Failed to get device id from server');
-                        });
-*/
                         $window.localStorage.setItem('gcm-register-id', registrationBody.registration_id);
                     }, function () {
                         $window.alert('Device registration failed');
