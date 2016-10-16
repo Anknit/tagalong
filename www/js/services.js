@@ -244,28 +244,28 @@ angular.module('app.services', [])
         'use strict';
         var driverRouteService = {},
             getDefinedRoutes = function (driverId) {
-                return $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', {}).then(function (response) {
+                return $http.get(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/routes', {}).then(function (response) {
                     return response.data;
                 }, function (response) {
                     $window.alert('Failed to get routes');
                 });
             },
             addDriverRoute = function (routeData, driverId) {
-                return $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes', routeData, {}).then(function (response) {
+                return $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/routes', routeData, {}).then(function (response) {
                     return response.data;
                 }, function (error) {
                     $window.console.log(error);
                 });
             },
             editDriverRoute = function (routeData, driverId) {
-                return $http.put(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes/' + routeData.routeName, routeData, {}).then(function (response) {
+                return $http.put(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/routes/' + routeData.routeName, routeData, {}).then(function (response) {
                     return response.data;
                 }, function (error) {
                     $window.console.log(error);
                 });
             },
             removeDriverRoute = function (routeName, driverId) {
-                return $http.delete(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/routes/ ' + routeName, {}).then(function (response) {
+                return $http.delete(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/routes/ ' + routeName, {}).then(function (response) {
                     return response.data;
                 }, function (error) {
                     $window.console.log(error);
@@ -302,7 +302,7 @@ angular.module('app.services', [])
                     shoppingCart: orders.shoppingCart,
                     paymentDetails: payMethod,
                     deliveryAddress: '',
-                    orderId:'',
+                    orderId: '',
                     
 /*
                     user: userData,
@@ -384,7 +384,7 @@ angular.module('app.services', [])
         'use strict';
         var paymentService = {},
             addPaymentMethod = function (payData) {
-                return $http.post(API_SERVICE_BASE + '/api/v1/users/user/creditcards', payData, {}).then(function (response) {
+                return $http.post(API_SERVICE_BASE + 'api/v1/users/user/creditcards', payData, {}).then(function (response) {
                     return response;
                 }, function (error) {
                     $window.console.log(error);

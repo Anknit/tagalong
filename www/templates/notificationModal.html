@@ -7,6 +7,11 @@
             <div class="item item-text-wrap">
                 <p data-ng-bind="notifyData.title"></p>
                 <p data-ng-bind="notifyData.message"></p>
+                <p data-ng-bind="notifyData.additionalData.address"></p>
+                <p data-ng-bind="notifyData.additionalData.requestedPickupTime"></p>
+            </div>
+            <div class="item item-text-wrap">
+                Response is awaiting for <span data-ng-bind="responseTimer"></span> seconds. 
             </div>
             <div class="item item-text-wrap">
                 <button class="button button-stable" data-ng-click="notifyAccept()">Accept</button>
