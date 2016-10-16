@@ -2,13 +2,13 @@
 function refreshAccessToken() {
     'use strict';
     var authRefreshToken = localStorage.getItem('refresh_token'),
-        TokenRefreshTime = 30 * 60 * 1000,
+        TokenRefreshTime = 1798 * 1000,
         data = "grant_type=refresh_token&refresh_token=" + authRefreshToken + "&client_id=" + window.clientId,
         http = new XMLHttpRequest();
     if (localStorage.getItem('expires_in')) {
-        TokenRefreshTime = parseInt(localStorage.getItem('expires_in'), 10) * 60 * 1000;
+        TokenRefreshTime = (parseInt(localStorage.getItem('expires_in'), 10) - 1) * 1000;
     }
-    http.open("POST", window.authServiceBase + 'token', true);
+    http.open("POST", window.authServiceBase + 'oauth/token', true);
     http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function () {
         if (http.readyState === 4) {
@@ -44,7 +44,7 @@ function refreshAccessToken() {
     }
     window.location.href = locationPath;
 }());
-var push;
+var push, orderWindowTimer;
 angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
     .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
@@ -123,16 +123,17 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     }
                 });
                 $rootScope.notifyAccept = function () {
+                    $window.clearInterval(orderWindowTimer);
                     var rootScope = this,
                         args = $rootScope.notifyData,
                         driverId = $window.localStorage.getItem('driver-id'),
                         temp = new Date(),
                         responseData = {
-                            "orderId": args.additionalData.orderId || 0,
+                            "orderId": args.orderId || args.additionalData.orderId || 0,
                             "response": "Accepted",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
-                    $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
+                    $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
                         $rootScope.notifyClose();
                     }, function (error) {
                         $window.alert('Failed to send response');
@@ -140,16 +141,17 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     });
                 };
                 $rootScope.notifyDecline = function () {
+                    $window.clearInterval(orderWindowTimer);
                     var rootScope = this,
                         args = $rootScope.notifyData,
                         driverId = $window.localStorage.getItem('driver-id'),
                         temp = new Date(),
                         responseData = {
-                            "orderId": args.additionalData.orderId || 0,
+                            "orderId": args.orderId || args.additionalData.orderId || 0,
                             "response": "Rejected",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
-                    $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
+                    $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
                         $rootScope.notifyClose();
                     }, function (error) {
                         $window.alert('Failed to send response');
@@ -163,6 +165,16 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 $rootScope.$on('new-push-notification', function (event, args) {
                     $window.console.log(args);
                     $rootScope.notifyData = args;
+                    $rootScope.responseTimer = args.additionalData.responseWindow;
+                    orderWindowTimer = $window.setInterval(function () {
+                        $rootScope.responseTimer = $rootScope.responseTimer - 1;
+                        $rootScope.$digest();
+                        if ($rootScope.responseTimer === 0) {
+                            $window.alert('Response window expires');
+                            $window.clearInterval(orderWindowTimer);
+                            $rootScope.notifyClose();
+                        } 
+                    }, 1000);
                     $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
                 });

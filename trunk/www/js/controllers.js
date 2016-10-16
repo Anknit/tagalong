@@ -14,7 +14,7 @@ var map;
             }
         };
         var driverId = $window.localStorage.getItem('driver-id');
-        $http.get(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
+        $http.get(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
             $scope.driverStatus = response.status;
         }, function (error) {
             $scope.driverStatus = ($window.localStorage.getItem('driver-status') === "true") || true;
@@ -37,7 +37,7 @@ var map;
                 temp = new Date();
                 statusData.untill = new Date(temp.setHours(temp.getHours() + 1));
             }
-            $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/status', statusData, {}).then(function (reponse) {
+            $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', statusData, {}).then(function (reponse) {
                 $rootScope.driverStatus = statusData;
                 if (statusData.status === 'Unavailable') {
                     $window.localStorage.setItem('Driver-Unavailable-till', statusData.untill.getTime());
@@ -46,7 +46,7 @@ var map;
                             $rootScope.driverStatus.status = 'Available';
                             $rootScope.driverStatus.untill = '';
                             statusData = $rootScope.driverStatus;
-                            $http.post(API_SERVICE_BASE + '/api/v1/drivers/' + driverId + '/status', statusData, {}).then(function (reponse) {
+                            $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', statusData, {}).then(function (reponse) {
                                 $scope.driverStatus = true;
                             }, function (error) {
                                 $window.console.log(error);
@@ -639,7 +639,7 @@ var map;
             $scope.submitOrder();
             $rootScope.newCardAdded = false;
         } else {
-            $http.get(API_SERVICE_BASE + '/api/v1/users/user', {}).then(function (response) {
+            $http.get(API_SERVICE_BASE + 'api/v1/users/user', {}).then(function (response) {
                 $scope.paymentOptions = response.data.creditCards;
                 $scope.userData = {
                     id: response.data.id,
