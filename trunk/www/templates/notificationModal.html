@@ -1,21 +1,21 @@
 <ion-modal-view>
     <ion-header-bar class="bar bar-header bar-positive">
-        <h1 class="title">New Notification</h1>
+        <h1 class="title">Order Requests</h1>
     </ion-header-bar>
     <ion-content class="padding">
-        <div class="card">
+        <div class="card" data-ng-repeat="(id,order) in notifyData">
             <div class="item item-text-wrap">
-                <p data-ng-bind="notifyData.title"></p>
-                <p data-ng-bind="notifyData.message"></p>
-                <p data-ng-bind="notifyData.additionalData.address"></p>
-                <p data-ng-bind="notifyData.additionalData.requestedPickupTime"></p>
+                <p data-ng-bind="order.title"></p>
+                <p data-ng-bind="order.message"></p>
+                <p data-ng-bind="order.additionalData.address"></p>
+                <p data-ng-bind="order.additionalData.requestedPickupTime"></p>
             </div>
             <div class="item item-text-wrap">
-                Response is awaiting for <span data-ng-bind="responseTimer"></span> seconds. 
+                Response is awaiting for <span data-ng-bind="order.additionalData.responseWindow"></span> seconds. 
             </div>
             <div class="item item-text-wrap">
-                <button class="button button-stable" data-ng-click="notifyAccept()">Accept</button>
-                <button class="button button-stable" data-ng-click="notifyDecline()">Close</button>
+                <button class="button button-stable" data-ng-click="notifyAccept(order)">Accept</button>
+                <button class="button button-stable" data-ng-click="notifyDecline(order)">Close</button>
             </div>
         </div>
     </ion-content>

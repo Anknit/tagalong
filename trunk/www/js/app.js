@@ -44,7 +44,7 @@ function refreshAccessToken() {
     }
     window.location.href = locationPath;
 }());
-var push, orderWindowTimer;
+var push, orderWindowTimer = {};
 angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
     .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
@@ -94,7 +94,30 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 $rootScope.side_menu.style.display = "none";
             }
         });
-
+        function orderActionCompleted(orderId, response) {
+            $interval.cancel(orderWindowTimer[orderId]);
+            delete $rootScope.notifyData[orderId];
+            var alertMessage='';        
+            switch (response) {
+                case 'Accepted':
+                    alertMessage = 'Order acceptance has been notified';
+                    break;
+                case 'Rejected':
+                    alertMessage = 'Order rejection has been notified';
+                    break;
+                case 'Expired':
+                    alertMessage = 'Order expired due to timeout';
+                    break;
+                case 'Failed':
+                    alertMessage = 'Order response notification failed';
+                    break;
+            }
+            $window.alert(alertMessage);
+            var awaitingOrders = Object.keys($rootScope.notifyData).length;
+            if (awaitingOrders === 0) {
+                $rootScope.notifyClose();
+            }
+        }
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -106,6 +129,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 // org.apache.cordova.statusbar required
                 $window.StatusBar.styleDefault();
             }
+            $rootScope.notifyData = {};
             if ($window.PushNotification) {
                 pushNotificationService.init();
                 $ionicModal.fromTemplateUrl('templates/notificationModal.html', {
@@ -122,40 +146,36 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                         pushNotificationService.attachToServer(args);
                     }
                 });
-                $rootScope.notifyAccept = function () {
-                    $window.clearInterval(orderWindowTimer);
+                $rootScope.notifyAccept = function (args) {
                     var rootScope = this,
-                        args = $rootScope.notifyData,
                         driverId = $window.localStorage.getItem('driver-id'),
+                        orderId = args.additionalData.orderId,
                         temp = new Date(),
                         responseData = {
-                            "orderId": args.orderId || args.additionalData.orderId || 0,
+                            "orderId": orderId,
                             "response": "Accepted",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
                     $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
-                        $rootScope.notifyClose();
+                        orderActionCompleted(orderId, 'Accepted');
                     }, function (error) {
-                        $window.alert('Failed to send response');
-                        $rootScope.notifyClose();
+                        orderActionCompleted(orderId, 'Failed');
                     });
                 };
-                $rootScope.notifyDecline = function () {
-                    $window.clearInterval(orderWindowTimer);
+                $rootScope.notifyDecline = function (args) {
                     var rootScope = this,
-                        args = $rootScope.notifyData,
                         driverId = $window.localStorage.getItem('driver-id'),
+                        orderId = args.additionalData.orderId,
                         temp = new Date(),
                         responseData = {
-                            "orderId": args.orderId || args.additionalData.orderId || 0,
+                            "orderId": orderId,
                             "response": "Rejected",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
                     $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
-                        $rootScope.notifyClose();
+                        orderActionCompleted(orderId, 'Rejected');
                     }, function (error) {
-                        $window.alert('Failed to send response');
-                        $rootScope.notifyClose();
+                        orderActionCompleted(orderId, 'Failed');
                     });
                 };
                 $rootScope.notifyClose = function () {
@@ -163,18 +183,14 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     $window.map.setClickable(true);
                 };
                 $rootScope.$on('new-push-notification', function (event, args) {
-                    $window.console.log(args);
-                    $rootScope.notifyData = args;
-                    $rootScope.responseTimer = args.additionalData.responseWindow;
-                    orderWindowTimer = $window.setInterval(function () {
-                        $rootScope.responseTimer = $rootScope.responseTimer - 1;
-                        $rootScope.$digest();
-                        if ($rootScope.responseTimer === 0) {
-                            $window.alert('Response window expires');
-                            $window.clearInterval(orderWindowTimer);
-                            $rootScope.notifyClose();
-                        } 
-                    }, 1000);
+                    var orderId = args.additionalData.orderId;
+                    $rootScope.notifyData[orderId] = args;
+                    orderWindowTimer[orderId] = $interval(function () {
+                        $rootScope.notifyData[orderId].additionalData.responseWindow -= 1;
+                        if ($rootScope.notifyData[orderId].additionalData.responseWindow === 0) {
+                            orderActionCompleted(orderId, 'Expired');
+                        }
+                    }, 1000, 0, 0, orderId);
                     $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
                 });
