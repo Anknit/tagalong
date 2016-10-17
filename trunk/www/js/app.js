@@ -96,6 +96,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
         });
         function orderActionCompleted(orderId, response) {
             $interval.cancel(orderWindowTimer[orderId]);
+            orderWindowTimer[orderId] = undefined;
+            delete orderWindowTimer[orderId];
             delete $rootScope.notifyData[orderId];
             var alertMessage='';        
             switch (response) {
@@ -190,7 +192,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                         if ($rootScope.notifyData[orderId].additionalData.responseWindow === 0) {
                             orderActionCompleted(orderId, 'Expired');
                         }
-                    }, 1000, 0, 0, orderId);
+                    }, 1000, 0, true, orderId);
                     $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
                 });
