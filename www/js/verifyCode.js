@@ -36,6 +36,7 @@ function getActivationCode(){
 	http.onreadystatechange=function(){
 		if(http.readyState == 4){
             if(http.status==200){
+                watchCodeSMS();
                 document.getElementById('code-input').value = '';
                 document.getElementById('verify-code-container').style.display = 'block';
             }
@@ -66,7 +67,7 @@ function onActivationCode() {
 		if(http.readyState == 4){
             if(http.status==200){
                 localStorage.setItem('isMobileVerified', "true");
-                window.location.href = "./verificationSuccess.html"
+                window.location.href = "./home.html"
             }
             else{
                 alert("Invalid Code");
