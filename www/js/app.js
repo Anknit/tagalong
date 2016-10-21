@@ -89,10 +89,10 @@ function redirectIfMobileVerified () {
         window.location.href = "./login.html";
     }
 }());
-var push, orderWindowTimer = {};
+var push, orderWindowTimer = {}, tagAlongApp;
+tagAlongApp = angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete']);
 function initiateAngularApp () {
-    angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
-    .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
+    tagAlongApp.constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
