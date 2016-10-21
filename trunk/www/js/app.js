@@ -63,7 +63,8 @@ function checkMobileVerificationStatus () {
     http.send();
 }
 function redirectIfMobileVerified () {
-    isMobileVerified = localStorage.getItem("isMobileVerified");
+    var isMobileVerified = localStorage.getItem("isMobileVerified");
+    isMobileVerified  = 'true';
     if (isMobileVerified === 'true') {
         initiateAngularApp();
         window.location.href = "home.html#dashboard";
@@ -72,8 +73,8 @@ function redirectIfMobileVerified () {
     }
 }
 var push,
-    orderWindowTimer = {},
-    tagAlongApp = angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete']);
+    orderWindowTimer = {};
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete']);
 (function onInit() {
     'use strict';
     var locationPath, isAuth = localStorage.getItem("isAuth"), isMobileVerified, tokenExpiry, remainingTokenValidity;
@@ -93,7 +94,7 @@ var push,
     }
 }());
 function initiateAngularApp() {
-    tagAlongApp.constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
+    angular.module('app').constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
