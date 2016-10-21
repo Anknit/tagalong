@@ -28,19 +28,29 @@
       }
     </style>
 </head>
-<body onload="watchCodeSMS()">
-    <h4 style="color:#000000;" class=" ">Verify activation code</h4>
-    <form id="verifyCode-form8" class="list ">
-        <label class="item item-input " id="verifyCode-input14">
-            <input type="number" placeholder="one time activation code(4 digits)" id="code-input"/>
-        </label>
-    </form>
-    <button id="verifyCode-button15" class=" button button-calm  button-block " onclick="onActivationCode()">Verify</button>
-    <div style="tex-align:center;">
-        <span>Not Received code yet? &nbsp;</span>
-        <button id="verifyCode-button15" class=" button" onclick="resendCodeRequest()">Resend Code</button>
+<body>
+    <div>
+        <h4 style="color:#000000;" class=" ">Verify Mobile Number</h4>
+        <form class="list">
+            <label class="item item-input " id="mobile-num">
+                <input type="tel" placeholder="Enter your mobile Number" id="mobile-num"/>
+            </label>
+        </form>
+        <button id="verifyCode-button15" class=" button button-stable button-block" onclick="getActivationCode()">Get Code</button>
     </div>
-    <a href="./home.html">Skip</a>
+    <div style="display:none;" id="verify-code-container">
+        <h4 style="color:#000000;" class=" ">Verify activation code</h4>
+        <form id="verifyCode-form8" class="list ">
+            <label class="item item-input " id="verifyCode-input14">
+                <input type="number" placeholder="one time activation code(4 digits)" id="code-input"/>
+            </label>
+        </form>
+        <button id="verifyCode-button15" class=" button button-calm  button-block " onclick="onActivationCode()">Verify</button>
+        <div style="tex-align:center;">
+            <span>Not Received code yet? &nbsp;</span>
+            <button id="verifyCode-button15" class=" button" onclick="getActivationCode()">Resend Code</button>
+        </div>
+    </div>
     <script type="text/javascript" src="js/config.js"></script>
     <script type="text/javascript" src="js/verifyCode.js"></script>
 </body>
