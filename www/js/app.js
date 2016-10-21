@@ -1,5 +1,5 @@
 /*global angular*/
-function refreshAccessToken() {
+function refreshAccessToken(callback) {
     'use strict';
     var authRefreshToken = localStorage.getItem('refresh_token'),
         TokenRefreshTime = 1798 * 1000,
@@ -19,33 +19,79 @@ function refreshAccessToken() {
                 localStorage.setItem('name', response.name);
                 localStorage.setItem('refresh_token', response.refresh_token);
                 localStorage.setItem("username", response.userName);
+                if (callback && (typeof (callback) === "function")) {
+                    callback();
+                }
             } else if (http.status === 400) {
                 response = JSON.parse(http.responseText);
                 window.alert(response.error_description);
                 window.location.href = "./login.html";
             } else {
                 window.console.log('Failed to refresh access token');
+                window.location.href = "./login.html";
             }
         }
     };
     http.send(data);
     window.setTimeout(refreshAccessToken, TokenRefreshTime);
 }
+function checkMobileVerificationStatus () {
+    var http = new XMLHttpRequest();
+    http.open("GET", window.authServiceBase + 'api/accounts/status', true);
+    http.setRequestHeader("Authorization", "Bearer " + localStorage.getItem('access_token'));
+    http.onreadystatechange = function () {
+        if (http.readyState === 4) {
+            var response = '';
+            if (http.status === 200) {
+                response = JSON.parse(http.responseText);
+                localStorage.setItem('isMobileVerified', response.mobileNumberConfirmed);
+                localStorage.setItem('isEmailVerified', response.emailConfirmed);
+                localStorage.setItem('isStatusActive', response.isActive);
+                if (response.mobileNumberConfirmed) {
+                    initiateAngularApp();
+                    locationPath = "home.html#dashboard";
+                } else {
+                    locationPath = "./verifyCode.html";
+                }
+            } else {
+                window.console.log('Failed to verify mobile. Please try again');
+                locationPath = "./login.html";
+            }
+            window.location.href = locationPath;
+        }
+    };
+    http.send();
+}
+function redirectIfMobileVerified () {
+    isMobileVerified = localStorage.getItem("isMobileVerified");
+    if (isMobileVerified === 'true') {
+        initiateAngularApp();
+        window.location.href = "home.html#dashboard";
+    } else {
+        checkMobileVerificationStatus();
+    }
+}
 (function onInit() {
     'use strict';
-    var locationPath, isAuth = localStorage.getItem("isAuth");
+    var locationPath, isAuth = localStorage.getItem("isAuth"), isMobileVerified, tokenExpiry, remainingTokenValidity;
     if (typeof isAuth === "undefined") {
-        locationPath = "./signup.html";
+        window.location.href = "./signup.html";
     } else if (isAuth === "true") {
-        refreshAccessToken();
-        locationPath = "home.html#dashboard";
+        tokenExpiry = localStorage.getItem('token_expires');
+        remainingTokenValidity = new Date().getTime() - new Number(tokenExpiry) - 10000; // 10 sec taken for compensation
+        if (remainingTokenValidity < 0) {
+            refreshAccessToken(redirectIfMobileVerified);
+        } else {
+            window.setTimeout(refreshAccessToken, remainingTokenValidity);
+            redirectIfMobileVerified();
+        }
     } else {
-        locationPath = "./login.html";
+        window.location.href = "./login.html";
     }
-    window.location.href = locationPath;
 }());
 var push, orderWindowTimer = {};
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
+function initiateAngularApp () {
+    angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
     .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
@@ -202,3 +248,4 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
             }
         });
     });
+}
