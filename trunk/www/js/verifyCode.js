@@ -1,22 +1,3 @@
-function watchCodeSMS(){
-    document.addEventListener("deviceready", function(){
-    if(SMS){
-        SMS.startWatch(function(){
-           document.addEventListener('onSMSArrive',function(e){
-               document.getElementById('code-input').value = e.data[0]['body'];
-/*
-               SMS.stopWatch(function(){
-                   document.removeEventListener('onSMSArrive');
-               },function(){});
-*/
-           });
-        },function(){
-
-        });
-    }
-    },true);
-}
-
 (function onInit() {
     var mobileNum = localStorage.getItem("mobilenum");
     if (typeof mobileNum !== "undefined") {
@@ -36,7 +17,6 @@ function getActivationCode(){
 	http.onreadystatechange=function(){
 		if(http.readyState == 4){
             if(http.status==200){
-                watchCodeSMS();
                 document.getElementById('code-input').value = '';
                 document.getElementById('verify-code-container').style.display = 'block';
             }
