@@ -71,14 +71,16 @@ function redirectIfMobileVerified () {
         checkMobileVerificationStatus();
     }
 }
+var push, orderWindowTimer = {}, tagAlongApp;
 (function onInit() {
     'use strict';
     var locationPath, isAuth = localStorage.getItem("isAuth"), isMobileVerified, tokenExpiry, remainingTokenValidity;
     if (typeof isAuth === "undefined") {
         window.location.href = "./signup.html";
     } else if (isAuth === "true") {
+        tagAlongApp = angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete']);
         tokenExpiry = localStorage.getItem('token_expires');
-        remainingTokenValidity = new Date().getTime() - new Number(tokenExpiry) - 10000; // 10 sec taken for compensation
+        remainingTokenValidity = new Number(tokenExpiry) - new Date().getTime() - 10000; // 10 sec taken for compensation
         if (remainingTokenValidity < 0) {
             refreshAccessToken(redirectIfMobileVerified);
         } else {
@@ -89,8 +91,6 @@ function redirectIfMobileVerified () {
         window.location.href = "./login.html";
     }
 }());
-var push, orderWindowTimer = {}, tagAlongApp;
-tagAlongApp = angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete']);
 function initiateAngularApp () {
     tagAlongApp.constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
