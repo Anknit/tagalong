@@ -78,7 +78,6 @@ var push, orderWindowTimer = {}, tagAlongApp;
     if (typeof isAuth === "undefined") {
         window.location.href = "./signup.html";
     } else if (isAuth === "true") {
-        tagAlongApp = angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete']);
         tokenExpiry = localStorage.getItem('token_expires');
         remainingTokenValidity = new Number(tokenExpiry) - new Date().getTime() - 10000; // 10 sec taken for compensation
         if (remainingTokenValidity < 0) {
@@ -92,7 +91,8 @@ var push, orderWindowTimer = {}, tagAlongApp;
     }
 }());
 function initiateAngularApp () {
-    tagAlongApp.constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
+    angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
+    .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
