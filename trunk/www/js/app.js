@@ -49,7 +49,6 @@ function checkMobileVerificationStatus () {
                 localStorage.setItem('isEmailVerified', response.emailConfirmed);
                 localStorage.setItem('isStatusActive', response.isActive);
                 if (response.mobileNumberConfirmed) {
-                    initiateAngularApp();
                     locationPath = "home.html#dashboard";
                 } else {
                     locationPath = "./verifyCode.html";
@@ -66,7 +65,6 @@ function checkMobileVerificationStatus () {
 function redirectIfMobileVerified () {
     var isMobileVerified = localStorage.getItem("isMobileVerified");
     if (isMobileVerified === 'true') {
-        initiateAngularApp();
         window.location.href = "home.html#dashboard";
     } else {
         checkMobileVerificationStatus();
@@ -74,7 +72,6 @@ function redirectIfMobileVerified () {
 }
 var push,
     orderWindowTimer = {};
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete']);
 (function onInit() {
     'use strict';
     var locationPath, isAuth = localStorage.getItem("isAuth"), isMobileVerified, tokenExpiry, remainingTokenValidity;
@@ -93,8 +90,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
         window.location.href = "./login.html";
     }
 }());
-function initiateAngularApp() {
-    angular.module('app').constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
+    .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
     .constant('CLIENT_ID', 'c49c92a9dfbe4374ba82fdbcadc70569')
@@ -250,4 +247,3 @@ function initiateAngularApp() {
             }
         });
     });
-}
