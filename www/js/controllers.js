@@ -4,6 +4,18 @@ var map;
     'use strict';
     var modCtrl = angular.module('app.controllers', []);
     modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', '$http', 'API_SERVICE_BASE', function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window, $http, API_SERVICE_BASE) {
+        $http.get(API_SERVICE_BASE + 'api/v1/users/user', {}, {}).then(function (response) {
+            $rootScope.user = response.data;
+            var driverId = $rootScope.user.userInfo[0].value;
+            $window.localStorage.setItem('driver-id', driverId);
+            $http.get(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
+                $scope.driverStatus = response.status;
+            }, function (error) {
+                $scope.driverStatus = ($window.localStorage.getItem('driver-status') === "true") || true;
+            });
+        }, function (response) {
+            $window.console.log('Failed to get Driver Data');
+        });
         $rootScope.side_menu.style.display = "none";
         $rootScope.authSuccess = true;
         $rootScope.hideSplash = true;
@@ -13,12 +25,6 @@ var map;
                 longitude: 0
             }
         };
-        var driverId = $window.localStorage.getItem('driver-id');
-        $http.get(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
-            $scope.driverStatus = response.status;
-        }, function (error) {
-            $scope.driverStatus = ($window.localStorage.getItem('driver-status') === "true") || true;
-        })
         $scope.changeDriverStatus = function () {
             var driverId = $window.localStorage.getItem('driver-id'),
                 temp,
@@ -280,17 +286,7 @@ var map;
     }]);
     modCtrl.controller('settingsCtrl', ['$scope', function ($scope) {
         $scope.logout = function () {
-            localStorage.setItem("isAuth", "false");
-            localStorage.setItem("isRemember", "false");
-            localStorage.removeItem("username");
-            localStorage.removeItem("passwd");
-            localStorage.removeItem("driver-id");
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("isEmailVerified");
-            localStorage.removeItem("isMobileVerified");
-            localStorage.removeItem("isStatusActive");
-            localStorage.removeItem("refresh_token");
-            localStorage.removeItem("token_expires");
+            window.resetStorageData();
             window.location.href = "./index.html";
         };
         $scope.settingsPushNotification = (localStorage.getItem('settingsPN') !== "false");
@@ -686,7 +682,7 @@ var map;
             ordersService.setUserData($scope.userData);
             ordersService.submitOrder().then(function (response) {
                 $location.path('orderConfirmation');
-            }, function(error) {
+            }, function (error) {
                 $window.alert('Failed to submit order');
             });
         };
@@ -720,7 +716,7 @@ var map;
                     state: $scope.addCard.cardBillingAddress.address.components.state,
                     postalCode: $scope.addCard.cardBillingAddress.address.components.postCode,
                     countryCode: $scope.addCard.cardBillingAddress.address.components.countryCode,
-                    formattedAddress: $scope.addCard.cardBillingAddress.address.name,
+                    formattedAddress: $scope.addCard.cardBillingAddress.address.name
                 }
             };
 /*

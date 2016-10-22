@@ -1,4 +1,17 @@
 /*global angular*/
+function resetStorageData () {
+    localStorage.setItem("isAuth", "false");
+    localStorage.setItem("isRemember", "false");
+    localStorage.removeItem("username");
+    localStorage.removeItem("passwd");
+    localStorage.removeItem("driver-id");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("isEmailVerified");
+    localStorage.removeItem("isMobileVerified");
+    localStorage.removeItem("isStatusActive");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("token_expires");
+}
 function refreshAccessToken(callback) {
     'use strict';
     var authRefreshToken = localStorage.getItem('refresh_token'),
@@ -22,12 +35,8 @@ function refreshAccessToken(callback) {
                 if (callback && (typeof (callback) === "function")) {
                     callback();
                 }
-            } else if (http.status === 400) {
-                response = JSON.parse(http.responseText);
-                window.alert(response.error_description);
-                window.location.href = "./login.html";
             } else {
-                window.console.log('Failed to refresh access token');
+                resetStorageData();
                 window.location.href = "./login.html";
             }
         }
@@ -112,12 +121,6 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
         $rootScope.authData = {
             token: localStorage.getItem('access_token')
         };
-        $http.get(API_SERVICE_BASE + 'api/v1/users/user', {}, {}).then(function (response) {
-            $rootScope.user = response.data;
-            $window.localStorage.setItem('driver-id', $rootScope.user.userInfo[0].value);
-        }, function (response) {
-            window.alert('Failed to get Driver Data');
-        });
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromParams) {
             if (toState.roles !== 3 && toState.roles !== USER_ROLE) {
                 event.preventDefault();
