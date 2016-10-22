@@ -42,6 +42,7 @@ function checkMobileVerificationStatus () {
     http.onreadystatechange = function () {
         if (http.readyState === 4) {
             var response = '';
+            var locationPath = "./login.html";
             if (http.status === 200) {
                 response = JSON.parse(http.responseText);
                 localStorage.setItem('isMobileVerified', response.mobileNumberConfirmed);
@@ -64,7 +65,6 @@ function checkMobileVerificationStatus () {
 }
 function redirectIfMobileVerified () {
     var isMobileVerified = localStorage.getItem("isMobileVerified");
-    isMobileVerified  = 'true';
     if (isMobileVerified === 'true') {
         initiateAngularApp();
         window.location.href = "home.html#dashboard";
