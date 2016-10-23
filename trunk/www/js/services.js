@@ -430,6 +430,30 @@ angular.module('app.services', [])
         authInterceptorServiceFactory.request = request;
         authInterceptorServiceFactory.responseError = responseError;
         return authInterceptorServiceFactory;
+    }])
+
+    .service('verificationService', ['$http', '$window', 'AUTH_SERVICE_BASE', function ($http, $window, AUTH_SERVICE_BASE) {
+        'use strict';
+        var serviceObj = {};
+        function getMobileCode(mobileNum) {
+            var username = $window.localStorage.getItem();
+            return $http.post(AUTH_SERVICE_BASE + 'api/accounts/getcode', {CodeType: "PhoneCode", MobileNumber: mobileNum, UserName: username}, {}).then(function (response) {
+                return response;
+            }, function (error) {
+                $window.console.log(error);
+            });
+        }
+        function verifyMobileCode(verifyCode, mobileNum) {
+            var username = $window.localStorage.getItem();
+            return $http.post(AUTH_SERVICE_BASE + 'api/accounts/verifycode', {Code: verifyCode, MobileNumber: mobileNum, UserName: username}, {}).then(function (response) {
+                return response;
+            }, function (error) {
+                $window.console.log(error);
+            });
+        }
+        serviceObj.requestMobileCode = getMobileCode;
+        serviceObj.verifyMobileCode = verifyMobileCode;
+        return serviceObj;
     }]);
 
 

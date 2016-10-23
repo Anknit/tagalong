@@ -1,21 +1,28 @@
 <ion-view title="Your Details" id="page18" class=" ">
     <ion-content padding="true" class="has-header">
-        <form id="yourDetails-form23" class="list ">
-            <label class="item item-input item-stacked-label " id="yourDetails-input40">
-                <span class="input-label">Legal Name</span>
-                <input type="text" placeholder="name">
-            </label>
-        </form>
-        <div class="item item-body " id="yourDetails-list-item-container5">
-            <p id="yourDetails-markdown11" style="margin-top:0px;color:#000000;" class=" ">To be able to partner with TagAlong you must agree to:</p>
-            <ion-list id="yourDetails-list5" class=" ">
-                <ion-item class="item-icon-left  " id="yourDetails-list-item8">
-                    <i class="icon ion-ionic"></i>Are 18 year and older</ion-item>
-                <ion-item class="item-icon-left  " id="yourDetails-list-item9">
-                    <i class="icon ion-ionic"></i>Have a smartphone</ion-item>
-            </ion-list>
+        <div>
+            <div class="ng-cloak" data-ng-show="isMobileVerified === false">
+                <div data-mobile-verification ></div>
+            </div>
+            <div data-ng-show="isMobileVerified" class="ng-cloak">
+                <form id="yourDetails-form23" class="list">
+                    <label class="item item-input item-stacked-label " id="yourDetails-input40">
+                        <span class="input-label">Legal Name</span>
+                        <input type="text" placeholder="name">
+                    </label>
+                </form>
+                <div class="item item-body " id="yourDetails-list-item-container5">
+                    <p id="yourDetails-markdown11" style="margin-top:0px;color:#000000;" class=" ">To be able to partner with TagAlong you must agree to:</p>
+                    <ion-list id="yourDetails-list5" class=" ">
+                        <ion-item class="item-icon-left  " id="yourDetails-list-item8">
+                            <i class="icon ion-ionic"></i>Are 18 year and older</ion-item>
+                        <ion-item class="item-icon-left  " id="yourDetails-list-item9">
+                            <i class="icon ion-ionic"></i>Have a smartphone</ion-item>
+                    </ion-list>
+                </div>
+                <button id="yourDetails-button32" class=" button button-balanced  ">Yes</button>
+                <button id="yourDetails-button33" class=" button button-stable  ">No</button>
+            </div>
         </div>
-        <button id="yourDetails-button32" class=" button button-balanced  ">Yes</button>
-        <button id="yourDetails-button33" class=" button button-stable  ">No</button>
     </ion-content>
 </ion-view>

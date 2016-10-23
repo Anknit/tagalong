@@ -32,6 +32,8 @@ function refreshAccessToken(callback) {
                 localStorage.setItem('name', response.name);
                 localStorage.setItem('refresh_token', response.refresh_token);
                 localStorage.setItem("username", response.userName);
+            	localStorage.setItem('expires_in',response.expires_in);
+            	localStorage.setItem('token_expires',new Date(response['.expires']).getTime());
                 if (callback && (typeof (callback) === "function")) {
                     callback();
                 }
@@ -79,21 +81,29 @@ function redirectIfMobileVerified () {
         checkMobileVerificationStatus();
     }
 }
+
+function redirectToHome () {
+    window.location.href = "home.html#dashboard";
+}
 var push,
     orderWindowTimer = {};
 (function onInit() {
     'use strict';
-    var locationPath, isAuth = localStorage.getItem("isAuth"), isMobileVerified, tokenExpiry, remainingTokenValidity;
+    var locationPath,
+        isAuth = localStorage.getItem("isAuth"),
+        isMobileVerified,
+        tokenExpiry,
+        remainingTokenValidity;
     if (typeof isAuth === "undefined") {
         window.location.href = "./signup.html";
     } else if (isAuth === "true") {
         tokenExpiry = localStorage.getItem('token_expires');
         remainingTokenValidity = new Number(tokenExpiry) - new Date().getTime() - 10000; // 10 sec taken for compensation
         if (remainingTokenValidity < 0) {
-            refreshAccessToken(redirectIfMobileVerified);
+            refreshAccessToken(redirectToHome);
         } else {
             window.setTimeout(refreshAccessToken, remainingTokenValidity);
-            redirectIfMobileVerified();
+            redirectToHome();
         }
     } else {
         window.location.href = "./login.html";
