@@ -1,6 +1,6 @@
 function onSignUp() {
     'use strict';
-    var data1, http, loginData,
+    var data1, http, loginData, loginHttp,
         firstname = document.forms.signupForm["sign-fname"].value.trim(),
         lastname = document.forms.signupForm["sign-lname"].value.trim(),
         username = document.forms.signupForm["sign-uname"].value.trim(),
@@ -45,15 +45,17 @@ function onSignUp() {
                 localStorage.setItem("username", username);
                 localStorage.setItem("passwd", passwd);
                 localStorage.setItem("mobilenum", data.MobileNumber);
+                window.alert('User registered successfully. Verify your email account to login');
+/*
                 loginData = "grant_type=password&username=" + username + "&password=" + passwd + "&client_id=" + window.clientId;
-                http = new XMLHttpRequest();
-                http.open("POST", window.authServiceBase + 'oauth/token', true);
-                http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function () {
+                loginHttp = new XMLHttpRequest();
+                loginHttp.open("POST", window.authServiceBase + 'oauth/token', true);
+                loginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                loginHttp.onreadystatechange = function () {
                     var response;
-                    if (http.readyState === 4) {
+                    if (loginHttp.readyState === 4) {
                         document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
-                        if (http.status === 200) {
+                        if (loginHttp.status === 200) {
                             response = JSON.parse(http.responseText);
                             localStorage.setItem('access_token', response.access_token);
                             localStorage.setItem('name', response.name);
@@ -64,16 +66,17 @@ function onSignUp() {
                             localStorage.setItem("isAuth", true);
                             localStorage.setItem("isRemember", true);
                             window.location.href = "./verifyCode.html";
-                        } else if (http.status === 400) {
-                            response = JSON.parse(http.responseText);
+                        } else if (loginHttp.status === 400) {
+                            response = JSON.parse(loginHttp.responseText);
                             window.alert(response.error_description);
                         } else {
                             window.alert('Please check your network connection');
                         }
                     }
                 };
-                http.send(loginData);
-                window.location.href = "./verifyCode.html";
+                loginHttp.send(loginData);
+*/
+                window.location.href = "./login.html";
             } else if (http.status === 400) {
                 document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
                 var response = JSON.parse(http.responseText);

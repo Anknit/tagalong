@@ -323,7 +323,9 @@ var map;
         };
     }]);
     modCtrl.controller('accountCtrl', function ($scope) {});
-    modCtrl.controller('yourDetailsCtrl', function ($scope) {});
+    modCtrl.controller('yourDetailsCtrl', function ($scope) {
+        
+    });
     modCtrl.controller('favoritesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {
         $scope.weekdays = [
             {
