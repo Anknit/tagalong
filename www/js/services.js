@@ -404,13 +404,7 @@ angular.module('app.services', [])
         var authInterceptorServiceFactory = {},
             responseError = function (rejection) {
                 if (rejection.status === 401) {
-                    $window.localStorage.setItem("isAuth", "false");
-                    $window.localStorage.setItem("isRemember", "false");
-                    $window.localStorage.removeItem("username");
-                    $window.localStorage.removeItem("passwd");
-                    if ($window.map) {
-                        $window.map.remove();
-                    }
+                    resetStorageData()
                     $window.location.href = "./index.html";
                 }
                 return $q.reject(rejection);
