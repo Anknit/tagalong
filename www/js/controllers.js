@@ -280,7 +280,6 @@ var map;
                 $scope.$digest();
             });
         }
-
         function uploadDocument() {
             docMgrService.uploadDocument($scope.imgData, additionalData, function (response) {
                 $scope.documents = response.collection.items;

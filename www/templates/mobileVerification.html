@@ -1,5 +1,5 @@
 <div>
-    <h4 style="color:#000000;" class=" ">Verify Mobile Number</h4>
+    <h4>Verify Mobile Number</h4>
     <form class="list">
         <label class="item item-input ">
             <input type="tel" placeholder="Enter your mobile Number" data-ng-model="mobilenumber"/>
@@ -8,15 +8,16 @@
     <button class="button button-stable button-block" data-ng-click="getActivationCode()" data-ng-disabled = "!mobilenumber">Get Code</button>
 </div>
 <div class="ng-cloak" data-ng-show="codeRequested">
-    <h4 style="color:#000000;" class=" ">Enter verification code</h4>
+    <h4>Enter verification code</h4>
     <form class="list ">
         <label class="item item-input">
             <input type="number" placeholder="One time activation code" data-ng-model="codevalue"/>
         </label>
     </form>
-    <button class=" button button-calm  button-block " data-ng-click="onActivationCode()">Verify</button>
-    <div style="tex-align:center;">
-        <span>Not Received code yet? &nbsp;</span>
-        <button class=" button" data-ng-click="getActivationCode()">Resend Code</button>
+    <button class="button button-calm  button-block " data-ng-click="onActivationCode()">Verify</button>
+    <div style="text-align:center;">
+        <span style="vertical-align:middle">Not Received code yet? &nbsp;</span>
+        <button style="vertical-align:middle" class="button" data-ng-click="getActivationCode()">Resend Code</button>
     </div>
 </div>
+<button class="button button-stable button-block" data-ng-click="cancelMobileVerification()">Cancel</button>
