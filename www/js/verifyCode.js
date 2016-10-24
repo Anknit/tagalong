@@ -1,6 +1,6 @@
 (function onInit() {
     var mobileNum = localStorage.getItem("mobilenum");
-    if (typeof mobileNum !== "undefined") {
+    if (mobileNum && typeof mobileNum !== "undefined") {
         document.getElementById('mobile-num').value = mobileNum;
     }
 }());

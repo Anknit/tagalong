@@ -5,12 +5,18 @@ function resetStorageData () {
     localStorage.removeItem("username");
     localStorage.removeItem("passwd");
     localStorage.removeItem("driver-id");
+    localStorage.removeItem("driver-status");
+    localStorage.removeItem("isDriver");
     localStorage.removeItem("access_token");
     localStorage.removeItem("isEmailVerified");
     localStorage.removeItem("isMobileVerified");
     localStorage.removeItem("isStatusActive");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("token_expires");
+    localStorage.removeItem("name");
+    localStorage.removeItem("token_type");
+    localStorage.removeItem("mobilenum");
+    localStorage.removeItem("expires_in");
 }
 function refreshAccessToken(callback) {
     'use strict';
@@ -117,9 +123,10 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
     .constant('PUSH_SENDER_ID', '406789023201')
     .constant('USER_ROLE', 1)
     .constant('APP_VERSION', 'v1')
-    .config(function ($httpProvider) {
+    .config(function ($httpProvider, $ionicConfigProvider) {
         'use strict';
         $httpProvider.interceptors.push('authInterceptorService');
+        $ionicConfigProvider.views.maxCache(0);
     })
     .run(function ($ionicPlatform, $rootScope, $ionicSideMenuDelegate, $window, USER_ROLE, $http, API_SERVICE_BASE, $interval, pushNotificationService, $ionicModal) {
         'use strict';
