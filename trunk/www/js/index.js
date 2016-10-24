@@ -1,6 +1,5 @@
 function onInit() {
     'use strict';
-    debugger;
     var tokenExpiry,
         remainingTokenValidity,
         isAuth = localStorage.getItem("isAuth");

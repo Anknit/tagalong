@@ -46,36 +46,6 @@ function onSignUp() {
                 localStorage.setItem("passwd", passwd);
                 localStorage.setItem("mobilenum", data.MobileNumber);
                 window.alert('User registered successfully. Verify your email account to login');
-/*
-                loginData = "grant_type=password&username=" + username + "&password=" + passwd + "&client_id=" + window.clientId;
-                loginHttp = new XMLHttpRequest();
-                loginHttp.open("POST", window.authServiceBase + 'oauth/token', true);
-                loginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                loginHttp.onreadystatechange = function () {
-                    var response;
-                    if (loginHttp.readyState === 4) {
-                        document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
-                        if (loginHttp.status === 200) {
-                            response = JSON.parse(http.responseText);
-                            localStorage.setItem('access_token', response.access_token);
-                            localStorage.setItem('name', response.name);
-                            localStorage.setItem('token_type', response.token_type);
-                            localStorage.setItem('refresh_token', response.refresh_token);
-                            localStorage.setItem('expires_in', response.expires_in);
-                            localStorage.setItem('token_expires', new Date(response['.expires']).getTime());
-                            localStorage.setItem("isAuth", true);
-                            localStorage.setItem("isRemember", true);
-                            window.location.href = "./verifyCode.html";
-                        } else if (loginHttp.status === 400) {
-                            response = JSON.parse(loginHttp.responseText);
-                            window.alert(response.error_description);
-                        } else {
-                            window.alert('Please check your network connection');
-                        }
-                    }
-                };
-                loginHttp.send(loginData);
-*/
                 window.location.href = "./login.html";
             } else if (http.status === 400) {
                 document.getElementsByClassName('loading-blocker')[0].style.display = 'none';

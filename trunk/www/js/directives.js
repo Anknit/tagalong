@@ -31,7 +31,7 @@ angular.module('app.directives', [])
         };
     }])
 
-    .directive('mobileVerification', ['verificationService', '$rootScope', function (verificationService, $rootScope) {
+    .directive('mobileVerification', ['verificationService', '$rootScope', '$state', '$ionicHistory', function (verificationService, $rootScope, $state, $ionicHistory) {
         'use strict';
         return {
             templateUrl: 'templates/mobileVerification.html',
@@ -55,6 +55,12 @@ angular.module('app.directives', [])
                         scope.codeVerified = true;
                         $rootScope.$broadcast('mobile-code-verified');
                     });
+                };
+                scope.cancelMobileVerification = function () {
+                    $ionicHistory.nextViewOptions({
+                        disableBack: true
+                    });
+                    $state.go('dashboard');
                 };
             }
         };
