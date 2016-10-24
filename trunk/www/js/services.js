@@ -96,6 +96,7 @@ angular.module('app.services', [])
 
     .service('pushNotificationService', ['$window', 'PUSH_SENDER_ID', '$rootScope', 'APP_VERSION', 'API_SERVICE_BASE', '$http', function ($window, PUSH_SENDER_ID, $rootScope, APP_VERSION, API_SERVICE_BASE, $http) {
         'use strict';
+
         function formatLocalDate() {
             var now = new Date(),
                 tzo = -now.getTimezoneOffset(),
@@ -104,14 +105,7 @@ angular.module('app.services', [])
                     var norm = Math.abs(Math.floor(num));
                     return (norm < 10 ? '0' : '') + norm;
                 };
-            return now.getFullYear()
-                + '-' + pad(now.getMonth() + 1)
-                + '-' + pad(now.getDate())
-                + 'T' + pad(now.getHours())
-                + ':' + pad(now.getMinutes())
-                + ':' + pad(now.getSeconds())
-                + dif + pad(tzo / 60)
-                + ':' + pad(tzo % 60);
+            return now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + 'T' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + dif + pad(tzo / 60) + ':' + pad(tzo % 60);
         }
 
         var se_pushNotification = {},
@@ -136,8 +130,8 @@ angular.module('app.services', [])
                 notificationObj.on('notification', function (data) {
                     $rootScope.$broadcast('new-push-notification', data);
                 });
-                notificationObj.on('error', function (e) {
-                    $rootScope.$broadcast('push-notification-error');
+                notificationObj.on('error', function (data) {
+                    $rootScope.$broadcast('push-notification-error', data);
                 });
             },
             registerDeviceOnServer = function (data, alreadyRegistered, deviceId) {
@@ -176,24 +170,26 @@ angular.module('app.services', [])
 
     .service('docMgrService', ['$window', 'UPLOAD_URI', '$rootScope', function ($window, UPLOAD_URI, $rootScope) {
         'use strict';
+
         function createNewFileEntry(imgUri) {
             window.resolveLocalFileSystemURL($window.cordova.file.cacheDirectory, function success(dirEntry) {
                 dirEntry.getFile("tempFile.jpeg", {
                     create: true,
                     exclusive: false
-                }, function (fileEntry) {
-                }, function () {
+                }, function (fileEntry) {}, function () {
                     $window.alert('Failed Get File');
                 });
             }, function () {
                 $window.alert('Failed resolve Local File Entry');
             });
         }
+
         function getFileEntry(imgUri, onSuccess) {
             window.resolveLocalFileSystemURL(imgUri, onSuccess, function () {
                 createNewFileEntry(imgUri);
             });
         }
+
         function upload(fileEntry, addParams, success) {
             var fileURL = fileEntry.toURL(),
                 fail = function (error) {
@@ -205,7 +201,9 @@ angular.module('app.services', [])
             options.fileKey = "file";
             options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
             options.mimeType = "image/jpeg";
-            options.headers = {'Content-Type': undefined};
+            options.headers = {
+                'Content-Type': undefined
+            };
             params.username = $rootScope.userData.userName;
             options.params = params;
             ft.upload(fileURL, encodeURI(UPLOAD_URI), success, fail, options);
@@ -303,11 +301,11 @@ angular.module('app.services', [])
                     paymentDetails: payMethod,
                     deliveryAddress: '',
                     orderId: '',
-                    
-/*
-                    user: userData,
-                    createDate: new Date().toISOString(),
-*/
+
+                    /*
+                                        user: userData,
+                                        createDate: new Date().toISOString(),
+                    */
                     orderStatus: "Added to Cart",
                     recipient: {}
                 };
@@ -333,16 +331,16 @@ angular.module('app.services', [])
             },
             priceOrder = function (orderData) {
                 orders.shoppingCart.push({
-/*
-                    itemType: "Parcel",
-                    quantity: 1,
-*/
+                    /*
+                                        itemType: "Parcel",
+                                        quantity: 1,
+                    */
                     product: {
                         pickupAddress: orderData.pickupAddress,
                         deliveryAddress: orderData.deliveryAddress,
-/*
-                        parcelType: "Parcel",
-*/
+                        /*
+                                                parcelType: "Parcel",
+                        */
                         productAttributeId: orderData.productAttributeId,
                         parcelSize: orderData.parcelSize,
                         sKUCode: orderData.sKUCode,
@@ -356,11 +354,11 @@ angular.module('app.services', [])
                         pickupContactNum: orderData.pickupContactNum,
                         pickupName: orderData.pickupName
                     }
-/*
-                    deliveryOptions: {
-                        pickupTimeSlot: orderData.pickupWindow
-                    }
-*/
+                    /*
+                                        deliveryOptions: {
+                                            pickupTimeSlot: orderData.pickupWindow
+                                        }
+                    */
                 });
                 return $http.post(API_SERVICE_BASE + 'api/v1/prices/orderprice', orders).then(function (results) {
                     price = results.data;
@@ -376,7 +374,7 @@ angular.module('app.services', [])
         ordersServiceFactory.orderInfo = orderInfo;
         ordersServiceFactory.setPaymentMethod = setPaymentMethod;
         ordersServiceFactory.setUserData = setUserData;
-        
+
         return ordersServiceFactory;
     }])
 
@@ -394,9 +392,9 @@ angular.module('app.services', [])
                 $rootScope.newCardData = payData;
                 $rootScope.newCardAdded = true;
             };
-/*  Dummy Till Fixed from server
-        paymentService.addPayMethod = addPaymentMethod;
-*/
+        /*  Dummy Till Fixed from server
+                paymentService.addPayMethod = addPaymentMethod;
+        */
         paymentService.addPayMethod = addPaymentDummy;
         return paymentService;
     }])
@@ -432,105 +430,133 @@ angular.module('app.services', [])
         return authInterceptorServiceFactory;
     }])
 
-    .service('verificationService', ['$http', '$window', 'AUTH_SERVICE_BASE', function ($http, $window, AUTH_SERVICE_BASE) {
+    .service('verificationService', ['$http', '$window', 'AUTH_SERVICE_BASE', '$q', function ($http, $window, AUTH_SERVICE_BASE, $q) {
         'use strict';
         var serviceObj = {};
+
         function getMobileCode(mobileNum) {
-            var username = $window.localStorage.getItem();
-            return $http.post(AUTH_SERVICE_BASE + 'api/accounts/getcode', {CodeType: "PhoneCode", MobileNumber: mobileNum, UserName: username}, {}).then(function (response) {
+            var username = $window.localStorage.getItem('username');
+            return $http.post(AUTH_SERVICE_BASE + 'api/accounts/getcode', {
+                CodeType: "PhoneCode",
+                MobileNumber: mobileNum,
+                UserName: username
+            }, {}).then(function (response) {
                 return response;
             }, function (error) {
                 $window.console.log(error);
             });
         }
+
         function verifyMobileCode(verifyCode, mobileNum) {
-            var username = $window.localStorage.getItem();
-            return $http.post(AUTH_SERVICE_BASE + 'api/accounts/verifycode', {Code: verifyCode, MobileNumber: mobileNum, UserName: username}, {}).then(function (response) {
+            var username = $window.localStorage.getItem('username');
+            return $http.post(AUTH_SERVICE_BASE + 'api/accounts/verifycode', {
+                Code: verifyCode,
+                MobileNumber: mobileNum,
+                UserName: username
+            }, {}).then(function (response) {
                 return response;
             }, function (error) {
                 $window.console.log(error);
             });
+        }
+
+        function checkMobileVerificationStatus() {
+            var mobileStatus = $window.localStorage.getItem('isMobileVerified'),
+                statusDeffered = $q.defer();
+            if (mobileStatus && typeof (mobileStatus) !== "undefined") {
+                mobileStatus = (mobileStatus === "true");
+                statusDeffered.resolve(mobileStatus);
+            } else {
+                $http.get(AUTH_SERVICE_BASE + 'api/accounts/status', {}).then(function (response) {
+                    $window.localStorage.setItem('isMobileVerified', response.data.mobileNumberConfirmed);
+                    statusDeffered.resolve(response.data.mobileNumberConfirmed);
+                }, function (error) {
+                    statusDeffered.reject(error);
+                });
+            }
+            return statusDeffered.promise;
         }
         serviceObj.requestMobileCode = getMobileCode;
         serviceObj.verifyMobileCode = verifyMobileCode;
+        serviceObj.isMobileVerified = checkMobileVerificationStatus;
         return serviceObj;
     }]);
 
 
-/*
+    /*
 
-{"shoppingCart":[
-    {
-        "product": {
-            "pickupAddress":{
-                "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
-                "address1":"undefined undefined",
-                "city":"Noida",
-                "state":"UP",
-                "postalCode":"201303",
-                "countryCode":"IN"
+    {"shoppingCart":[
+        {
+            "product": {
+                "pickupAddress":{
+                    "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
+                    "address1":"undefined undefined",
+                    "city":"Noida",
+                    "state":"UP",
+                    "postalCode":"201303",
+                    "countryCode":"IN"
+                },
+                "deliveryAddress":{
+                    "formattedAddress":"Bhagawan Mahavir Marg, Varun Kunj, Rithala, Rohini, New Delhi, Delhi 110085, India",
+                    "address1":"undefined Bhagawan Mahavir Marg",
+                    "city":"New Delhi",
+                    "state":"DL",
+                    "postalCode":"110085",
+                    "countryCode":"IN"
+                },
+                "parcelSize":"SM",
+                "sKUCode":"S-2016",
+                "productAttributeId":6,
+                "pickupWindow":"PM",
+                "pickupDate":"",
+                "deliveryDate":"",
+                "pickupName":"Ankit",
+                "pickupContactNum":9457192833,
+                "pickupContactEmail":"ankitakkii24@gmail.com",
+                "delivContactNum":7042206861,
+                "delivName":"Karishma",
+                "delivContactEmail":"abhishek@gmail.com"
+            }
+        }],
+        "deliveryAddress":"",
+        "paymentDetails":{
+            "cardInfo":{
+                "billingAddress":{
+                    "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
+                    "address1":"undefined undefined",
+                    "city":"Noida",
+                    "state":"UP",
+                    "postalCode":"201303",
+                    "countryCode":"IN"
+                },
+                "cardType":"VISA",
+                "cardNumber":"4111111111111111",
+                "securityCode":"999",
+                "expireMonth":"03",
+                "expireYear":"2019",
+                "cardHolderName":"Ankit Agarwal"
             },
-            "deliveryAddress":{
-                "formattedAddress":"Bhagawan Mahavir Marg, Varun Kunj, Rithala, Rohini, New Delhi, Delhi 110085, India",
-                "address1":"undefined Bhagawan Mahavir Marg",
-                "city":"New Delhi",
-                "state":"DL",
-                "postalCode":"110085",
-                "countryCode":"IN"
-            },
-            "parcelSize":"SM",
-            "sKUCode":"S-2016",
-            "productAttributeId":6,
-            "pickupWindow":"PM",
-            "pickupDate":"",
-            "deliveryDate":"",
-            "pickupName":"Ankit",
-            "pickupContactNum":9457192833,
-            "pickupContactEmail":"ankitakkii24@gmail.com",
-            "delivContactNum":7042206861,
-            "delivName":"Karishma",
-            "delivContactEmail":"abhishek@gmail.com"
-        }
-    }],
-    "deliveryAddress":"",
-    "paymentDetails":{
-        "cardInfo":{
-            "billingAddress":{
-                "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
-                "address1":"undefined undefined",
-                "city":"Noida",
-                "state":"UP",
-                "postalCode":"201303",
-                "countryCode":"IN"
-            },
-            "cardType":"VISA",
-            "cardNumber":"4111111111111111",
-            "securityCode":"999",
-            "expireMonth":"03",
-            "expireYear":"2019",
-            "cardHolderName":"Ankit Agarwal"
+            "paymentMethod":"NewCard",
+            "paymentProfile":{
+                "billingAddress":{
+                    "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
+                    "address1":"undefined undefined",
+                    "city":"Noida",
+                    "state":"UP",
+                    "postalCode":"201303",
+                    "countryCode":"IN"
+                },
+                "cardType":"VISA",
+                "cardNumber":"4111111111111111",
+                "securityCode":"999",
+                "expireMonth":"03",
+                "expireYear":"2019",
+                "cardHolderName":"Ankit Agarwal"
+            }
         },
-        "paymentMethod":"NewCard",
-        "paymentProfile":{
-            "billingAddress":{
-                "formattedAddress":"Sector 39A, Sector 32, Sector 39, Noida, Uttar Pradesh 201303, India",
-                "address1":"undefined undefined",
-                "city":"Noida",
-                "state":"UP",
-                "postalCode":"201303",
-                "countryCode":"IN"
-            },
-            "cardType":"VISA",
-            "cardNumber":"4111111111111111",
-            "securityCode":"999",
-            "expireMonth":"03",
-            "expireYear":"2019",
-            "cardHolderName":"Ankit Agarwal"
-        }
-    },
-    "recipient":{},
-    "orderId":"",
-    "orderStatus":"Added to Cart"
-}
+        "recipient":{},
+        "orderId":"",
+        "orderStatus":"Added to Cart"
+    }
 
-*/
+    */

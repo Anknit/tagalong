@@ -3,19 +3,53 @@ var map;
 (function (angular) {
     'use strict';
     var modCtrl = angular.module('app.controllers', []);
-    modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', '$http', 'API_SERVICE_BASE', function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window, $http, API_SERVICE_BASE) {
-        $http.get(API_SERVICE_BASE + 'api/v1/users/user', {}, {}).then(function (response) {
-            $rootScope.user = response.data;
-            var driverId = $rootScope.user.userInfo[0].value;
-            $window.localStorage.setItem('driver-id', driverId);
-            $http.get(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
-                $scope.driverStatus = response.status;
-            }, function (error) {
-                $scope.driverStatus = ($window.localStorage.getItem('driver-status') === "true") || true;
+    modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', '$http', 'API_SERVICE_BASE', 'userprofileService', function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window, $http, API_SERVICE_BASE, userprofileService) {
+        function checkDriverStatus() {
+            var driverId,
+                userinfo = $rootScope.user.userInfo,
+                driverStatus = $window.localStorage.getItem('driver-status'),
+                isDriver = $window.localStorage.getItem('isDriver');
+            if (isDriver === "true") {
+                $rootScope.isDriverUser = true;
+                driverId  = $window.localStorage.getItem('driver-id');
+            } else if (isDriver === "false") {
+                $rootScope.isDriverUser = false;
+            } else {
+                if (typeof userinfo === "object" && userinfo.length > 0 && userinfo[0].value) {
+                    driverId = userinfo[0].value;
+                    $rootScope.isDriverUser = true;
+                    $window.localStorage.setItem('driver-id', driverId);
+                } else {
+                    $rootScope.isDriverUser = false;
+                }
+            }
+            $window.localStorage.setItem('isDriver', $rootScope.isDriverUser);
+            if ($rootScope.isDriverUser) {
+                if (driverStatus === "true" || driverStatus === "false") {
+                    $scope.driverStatus = (driverStatus === "true");
+                    $window.localStorage.setItem('driver-status', $scope.driverStatus);
+                } else {
+                    $http.get(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
+                        $scope.driverStatus = response.status;
+                        $window.localStorage.setItem('driver-status', $scope.driverStatus);
+                    }, function (error) {
+                        $window.console.log(error);
+                        $scope.driverStatus = true;
+                        $window.localStorage.setItem('driver-status', $scope.driverStatus);
+                    });
+                }
+            }
+        }
+        if ($rootScope.user && typeof $rootScope.user === "object") {
+            checkDriverStatus();
+        } else {
+            userprofileService.getUserProfile().then(function (response) {
+                $rootScope.user = response.data;
+                checkDriverStatus();
+            }, function (response) {
+                
             });
-        }, function (response) {
-            $window.console.log('Failed to get Driver Data');
-        });
+        }
         $rootScope.side_menu.style.display = "none";
         $rootScope.authSuccess = true;
         $rootScope.hideSplash = true;
@@ -323,9 +357,33 @@ var map;
         };
     }]);
     modCtrl.controller('accountCtrl', function ($scope) {});
-    modCtrl.controller('yourDetailsCtrl', function ($scope) {
-        
-    });
+    modCtrl.controller('yourDetailsCtrl', ['$scope', 'verificationService', '$location', '$state', '$ionicHistory', function ($scope, verificationService, $location, $state, $ionicHistory) {
+        verificationService.isMobileVerified().then(function (status) {
+            if (status) {
+                $scope.isMobileVerified = true;
+            } else {
+                $scope.isMobileVerified = false;
+            }
+        }, function (error) {
+            $scope.error = error;
+        });
+        $scope.$on('mobile-code-verified', function () {
+            $scope.isMobileVerified = true;
+        });
+        $scope.confirmDriverAgreement = function () {
+            if ($scope.driverLegalname && $scope.driverLegalname !== '') {
+                $state.go('uploadDocuments');
+            } else {
+                window.alert('Please provide a legal name');
+            }
+        };
+        $scope.declineDriverAgreement = function () {
+            $ionicHistory.nextViewOptions({
+                disableBack: true
+            });
+            $state.go('dashboard');
+        };
+    }]);
     modCtrl.controller('favoritesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {
         $scope.weekdays = [
             {
