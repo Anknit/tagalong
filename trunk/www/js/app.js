@@ -1,96 +1,4 @@
 /*global angular*/
-function resetStorageData () {
-    localStorage.setItem("isAuth", "false");
-    localStorage.setItem("isRemember", "false");
-    localStorage.removeItem("username");
-    localStorage.removeItem("passwd");
-    localStorage.removeItem("driver-id");
-    localStorage.removeItem("driver-status");
-    localStorage.removeItem("isDriver");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("isEmailVerified");
-    localStorage.removeItem("isMobileVerified");
-    localStorage.removeItem("isStatusActive");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("token_expires");
-    localStorage.removeItem("name");
-    localStorage.removeItem("token_type");
-    localStorage.removeItem("mobilenum");
-    localStorage.removeItem("expires_in");
-}
-function refreshAccessToken(callback) {
-    'use strict';
-    var authRefreshToken = localStorage.getItem('refresh_token'),
-        TokenRefreshTime = 1798 * 1000,
-        data = "grant_type=refresh_token&refresh_token=" + authRefreshToken + "&client_id=" + window.clientId,
-        http = new XMLHttpRequest();
-    if (localStorage.getItem('expires_in')) {
-        TokenRefreshTime = (parseInt(localStorage.getItem('expires_in'), 10) - 1) * 1000;
-    }
-    http.open("POST", window.authServiceBase + 'oauth/token', true);
-    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function () {
-        if (http.readyState === 4) {
-            var response = '';
-            if (http.status === 200) {
-                response = JSON.parse(http.responseText);
-                localStorage.setItem('access_token', response.access_token);
-                localStorage.setItem('name', response.name);
-                localStorage.setItem('refresh_token', response.refresh_token);
-                localStorage.setItem("username", response.userName);
-            	localStorage.setItem('expires_in',response.expires_in);
-            	localStorage.setItem('token_expires',new Date(response['.expires']).getTime());
-                if (callback && (typeof (callback) === "function")) {
-                    callback();
-                }
-            } else {
-                resetStorageData();
-                window.location.href = "./login.html";
-            }
-        }
-    };
-    http.send(data);
-    window.setTimeout(refreshAccessToken, TokenRefreshTime);
-}
-function checkMobileVerificationStatus () {
-    var http = new XMLHttpRequest();
-    http.open("GET", window.authServiceBase + 'api/accounts/status', true);
-    http.setRequestHeader("Authorization", "Bearer " + localStorage.getItem('access_token'));
-    http.onreadystatechange = function () {
-        if (http.readyState === 4) {
-            var response = '';
-            var locationPath = "./login.html";
-            if (http.status === 200) {
-                response = JSON.parse(http.responseText);
-                localStorage.setItem('isMobileVerified', response.mobileNumberConfirmed);
-                localStorage.setItem('isEmailVerified', response.emailConfirmed);
-                localStorage.setItem('isStatusActive', response.isActive);
-                if (response.mobileNumberConfirmed) {
-                    locationPath = "home.html#dashboard";
-                } else {
-                    locationPath = "./verifyCode.html";
-                }
-            } else {
-                window.console.log('Failed to verify mobile. Please try again');
-                locationPath = "./login.html";
-            }
-            window.location.href = locationPath;
-        }
-    };
-    http.send();
-}
-function redirectIfMobileVerified () {
-    var isMobileVerified = localStorage.getItem("isMobileVerified");
-    if (isMobileVerified === 'true') {
-        window.location.href = "home.html#dashboard";
-    } else {
-        checkMobileVerificationStatus();
-    }
-}
-
-function redirectToHome () {
-    window.location.href = "home.html#dashboard";
-}
 var push,
     orderWindowTimer = {};
 (function onInit() {
@@ -104,12 +12,12 @@ var push,
         window.location.href = "./signup.html";
     } else if (isAuth === "true") {
         tokenExpiry = localStorage.getItem('token_expires');
-        remainingTokenValidity = new Number(tokenExpiry) - new Date().getTime() - 10000; // 10 sec taken for compensation
+        remainingTokenValidity = parseInt(tokenExpiry, 10) - new Date().getTime() - 10000; // 10 sec taken for compensation
         if (remainingTokenValidity < 0) {
-            refreshAccessToken(redirectToHome);
+            window.refreshAccessToken(window.redirectToHome);
         } else {
-            window.setTimeout(refreshAccessToken, remainingTokenValidity);
-            redirectToHome();
+            window.setTimeout(window.refreshAccessToken, remainingTokenValidity);
+            window.redirectToHome();
         }
     } else {
         window.location.href = "./login.html";
@@ -164,23 +72,24 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
             orderWindowTimer[orderId] = undefined;
             delete orderWindowTimer[orderId];
             delete $rootScope.notifyData[orderId];
-            var alertMessage='';        
+            var alertMessage = '',
+                awaitingOrders;
             switch (response) {
-                case 'Accepted':
-                    alertMessage = 'Order acceptance has been notified';
-                    break;
-                case 'Rejected':
-                    alertMessage = 'Order rejection has been notified';
-                    break;
-                case 'Expired':
-                    alertMessage = 'Order expired due to timeout';
-                    break;
-                case 'Failed':
-                    alertMessage = 'Order response notification failed';
-                    break;
+            case 'Accepted':
+                alertMessage = 'Order acceptance has been notified';
+                break;
+            case 'Rejected':
+                alertMessage = 'Order rejection has been notified';
+                break;
+            case 'Expired':
+                alertMessage = 'Order expired due to timeout';
+                break;
+            case 'Failed':
+                alertMessage = 'Order response notification failed';
+                break;
             }
             $window.alert(alertMessage);
-            var awaitingOrders = Object.keys($rootScope.notifyData).length;
+            awaitingOrders = Object.keys($rootScope.notifyData).length;
             if (awaitingOrders === 0) {
                 $rootScope.notifyClose();
             }

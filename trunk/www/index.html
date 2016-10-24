@@ -5,26 +5,13 @@
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <title>TagAlong</title>
         <link rel="stylesheet" href="css/common.css" />
+        <script type="application/javascript" src="js/config.js"></script>
+        <script type="application/javascript" src="js/common.js"></script>
+        <script type="application/javascript" src="js/index.js"></script>
     </head>
     <body onload="onInit();">
         <div class="splashscreen">
             <img src="img/logo.png" />
         </div>
-        <script>
-            function onInit(){
-                var isAuth = localStorage.getItem("isAuth");
-                var locationPath;
-                if(typeof isAuth == "undefined"){
-                    locationPath = "./signup.html";
-                }
-                else if(isAuth == "true"){
-                    locationPath = "./home.html";
-                }
-                else {
-                    locationPath = "./login.html";
-                }
-                window.location.href = locationPath;
-            }
-        </script>
     </body>
 </html>
