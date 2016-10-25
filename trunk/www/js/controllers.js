@@ -224,8 +224,31 @@ var map;
             }
         };
     }]);
-    modCtrl.controller('uploadDocumentsCtrl', ['$scope', 'docMgrService', function ($scope, docMgrService) {
-        var additionalData = {};
+    modCtrl.controller('uploadDocumentsCtrl', ['$scope', 'docMgrService', '$http', 'API_SERVICE_BASE', '$ionicHistory', '$state', ', $rootScope', function ($scope, docMgrService, $http, API_SERVICE_BASE, $ionicHistory, $state, $rootScope) {
+        var additionalData = {}, docItem, i;
+        $scope.uploadedDocsStatus = {license: false, registration: false, insurance: false};
+        function updateDocStatus(docType) {
+            switch (docType) {
+            case '1':
+                $scope.uploadedDocsStatus.license = true;
+                break;
+            case '2':
+                $scope.uploadedDocsStatus.registration = true;
+                break;
+            case '3':
+                $scope.uploadedDocsStatus.insurance = true;
+                break;
+            default:
+                break;
+            }
+        }
+        docMgrService.fetchDocument().then(function (response) {
+            $scope.documents = response.data.collection.items || [];
+            for (i = 0; i < $scope.documents.length; i = i + 1) {
+                docItem = $scope.documents[i].data;
+                updateDocStatus(docItem[5].value);
+            }
+        });
         $scope.showUploadOption = false;
         $scope.uploadDocType = 0;
         $scope.documents = [];
@@ -281,10 +304,17 @@ var map;
             });
         }
         function uploadDocument() {
+            window.document.getElementsByClassName('loading-blocker')[0].style.display = 'block';
             docMgrService.uploadDocument($scope.imgData, additionalData, function (response) {
-                $scope.documents = response.collection.items;
+                window.document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
+                $scope.documents.push(response.collection.items);
+                updateDocStatus($scope.uploadDocType.toString());
                 $scope.uploadDocType = 0;
+                $scope.$digest();
                 window.alert('Document uploaded successfully');
+            }, function (error) {
+                window.console.log(error);
+                window.document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
             });
         }
         $scope.getDriverLicense = function () {
@@ -315,6 +345,27 @@ var map;
         };
         $scope.closePreview = function () {
             $scope.showUploadOption = false;
+        };
+        $scope.becomeDriver = function () {
+            var legalName = window.localStorage.getItem('legal-name');
+            $http.post(API_SERVICE_BASE + 'api/v1/drivers', {legalname: legalName}, {}).then(function (response) {
+                $rootScope.isDriverUser = true;
+                window.localStorage.setItem('isDriver', true);
+                window.localStorage.setItem('driver-id', response.data.id);
+                $ionicHistory.nextViewOptions({
+                    disableBack: true
+                });
+                $state.go('dashboard');
+            }, function (error) {
+                window.console.log(error);
+                window.alert('Failed to create driver');
+            });
+        };
+        $scope.cancelBecomeDriver = function () {
+            $ionicHistory.nextViewOptions({
+                disableBack: true
+            });
+            $state.go('dashboard');
         };
     }]);
     modCtrl.controller('settingsCtrl', ['$scope', function ($scope) {
@@ -366,11 +417,13 @@ var map;
         }, function (error) {
             $scope.error = error;
         });
+        $scope.driverLegalname = window.localStorage.getItem('legal-name') || '';
         $scope.$on('mobile-code-verified', function () {
             $scope.isMobileVerified = true;
         });
         $scope.confirmDriverAgreement = function () {
             if ($scope.driverLegalname && $scope.driverLegalname !== '') {
+                window.localStorage.setItem('legal-name', $scope.driverLegalname);
                 $state.go('uploadDocuments');
             } else {
                 window.alert('Please provide a legal name');
