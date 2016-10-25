@@ -17,6 +17,7 @@ function resetStorageData() {
     localStorage.removeItem("token_type");
     localStorage.removeItem("mobilenum");
     localStorage.removeItem("expires_in");
+    localStorage.removeItem("legal-name");
     if (window.map) {
         window.map.remove();
     }

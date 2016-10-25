@@ -168,7 +168,7 @@ angular.module('app.services', [])
         return se_pushNotification;
     }])
 
-    .service('docMgrService', ['$window', 'UPLOAD_URI', '$rootScope', function ($window, UPLOAD_URI, $rootScope) {
+    .service('docMgrService', ['$window', 'UPLOAD_URI', '$rootScope', '$http', function ($window, UPLOAD_URI, $rootScope, $http) {
         'use strict';
 
         function createNewFileEntry(imgUri) {
@@ -232,7 +232,12 @@ angular.module('app.services', [])
                 });
             },
             fetchDocument: function () {
-
+                var username = $window.localStorage.getItem('username');
+                return $http.get(UPLOAD_URI + 'user/' + username).then(function (response) {
+                    return response;
+                }, function (error) {
+                    $window.console.log(error);
+                });
             }
         };
         return docService;
@@ -404,7 +409,7 @@ angular.module('app.services', [])
         var authInterceptorServiceFactory = {},
             responseError = function (rejection) {
                 if (rejection.status === 401) {
-                    resetStorageData()
+                    $window.resetStorageData();
                     $window.location.href = "./index.html";
                 }
                 return $q.reject(rejection);
