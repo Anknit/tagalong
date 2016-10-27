@@ -224,7 +224,7 @@ var map;
             }
         };
     }]);
-    modCtrl.controller('uploadDocumentsCtrl', ['$scope', 'docMgrService', '$http', 'API_SERVICE_BASE', '$ionicHistory', '$state', ', $rootScope', function ($scope, docMgrService, $http, API_SERVICE_BASE, $ionicHistory, $state, $rootScope) {
+    modCtrl.controller('uploadDocumentsCtrl', ['$scope', 'docMgrService', '$http', 'API_SERVICE_BASE', '$ionicHistory', '$state', '$rootScope', function ($scope, docMgrService, $http, API_SERVICE_BASE, $ionicHistory, $state, $rootScope) {
         var additionalData = {}, docItem, i;
         $scope.uploadedDocsStatus = {license: false, registration: false, insurance: false};
         function updateDocStatus(docType) {
