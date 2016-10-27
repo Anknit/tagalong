@@ -8,6 +8,7 @@ function resetStorageData() {
     localStorage.removeItem("driver-status");
     localStorage.removeItem("isDriver");
     localStorage.removeItem("access_token");
+    localStorage.removeItem("gcm-register-id");
     localStorage.removeItem("isEmailVerified");
     localStorage.removeItem("isMobileVerified");
     localStorage.removeItem("isStatusActive");
