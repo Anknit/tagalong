@@ -112,6 +112,20 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     scope: $rootScope
                 }).then(function (modal) {
                     $rootScope.notificationModal = modal;
+                    $rootScope.playNotificationAudio = function () {
+                        var audioElement = document.getElementById('notification-audio'),
+                            url = audioElement.getAttribute('src');
+                        $rootScope.my_media = new window.Media(url, null, null, function (status) {
+                            if (status === window.Media.MEDIA_STOPPED && Object.keys($rootScope.notifyData).length > 0) {
+                                $rootScope.my_media.seekTo(0);
+                                $rootScope.my_media.play();
+                            }
+                        });
+                        $rootScope.my_media.play();
+                    };
+                    $rootScope.pauseNotificationAudio = function () {
+                        $rootScope.my_media.stop();
+                    };
                 });
                 $rootScope.$on('gcm-registered', function (event, args) {
                     var regId = $window.localStorage.getItem('gcm-register-id');
@@ -155,6 +169,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     });
                 };
                 $rootScope.notifyClose = function () {
+                    $rootScope.pauseNotificationAudio();
                     $rootScope.notificationModal.hide();
                     $window.map.setClickable(true);
                 };
@@ -169,6 +184,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     }, 1000, 0, true, orderId);
                     $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
+                    $rootScope.playNotificationAudio();
                 });
                 $rootScope.$on('push-notification-error', function (event, args) {
                     $window.console.log(args);
