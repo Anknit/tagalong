@@ -49,54 +49,34 @@ angular.module('app.routes', [])
                 },
                 roles: 3
             })
-            .state('profile.account', {
-                url: '/account',
-                views: {
-                    'tab7': {
-                        templateUrl: 'templates/account.html',
-                        controller: 'accountCtrl'
-                    }
-                },
+            .state('directDeposit', {
+                url: '/directDeposit',
+                templateUrl: 'templates/directDeposit.html',
+                controller: 'directDepositCtrl',
                 roles: 3
             })
-            .state('profile.creditDebitCard', {
+            .state('creditDebitCard', {
                 url: '/creditPayment',
-                views: {
-                    'tab7': {
-                        templateUrl: 'templates/creditDebitCard.html',
-                        controller: 'creditDebitCardCtrl'
-                    }
-                },
+                templateUrl: 'templates/creditDebitCard.html',
+                controller: 'creditDebitCardCtrl',
                 roles: 3
             })
-            .state('profile.directAccount', {
+            .state('directAccount', {
                 url: '/directPayment',
-                views: {
-                    'tab7': {
-                        templateUrl: 'templates/directAccount.html',
-                        controller: 'directAccountCtrl'
-                    }
-                },
+                templateUrl: 'templates/directAccount.html',
+                controller: 'directAccountCtrl',
                 roles: 3
             })
-            .state('profile.directAccount.checkingaccount', {
+            .state('checkingaccount', {
                 url: '/checkingAccount',
-                views: {
-                    'tab7@profile': {
-                        templateUrl: 'templates/checkingaccount.html',
-                        controller: 'checkingAccountCtrl'
-                    }
-                },
+                templateUrl: 'templates/checkingaccount.html',
+                controller: 'checkingAccountCtrl',
                 roles: 3
             })
-            .state('profile.directAccount.paypalaccount', {
+            .state('paypalaccount', {
                 url: '/paypalAccount',
-                views: {
-                    'tab7@profile': {
-                        templateUrl: 'templates/paypalaccount.html',
-                        controller: 'paypalAccountCtrl'
-                    }
-                },
+                templateUrl: 'templates/paypalaccount.html',
+                controller: 'paypalAccountCtrl',
                 roles: 3
             })
             .state('yourDetails', {
@@ -111,10 +91,16 @@ angular.module('app.routes', [])
                 controller: 'uploadDocumentsCtrl',
                 roles: 1
             })
-            .state('favorites', {
-                url: '/favorites',
-                templateUrl: 'templates/favorites.html',
-                controller: 'favoritesCtrl',
+            .state('driverRoutes', {
+                url: '/driverRoutes',
+                templateUrl: 'templates/driverRoutes.html',
+                controller: 'driverRoutesCtrl',
+                roles: 3
+            })
+            .state('driverOptions', {
+                url: '/driverOptions',
+                templateUrl: 'templates/driverOptions.html',
+                controller: 'driverOptionsCtrl',
                 roles: 3
             })
             .state('settings', {

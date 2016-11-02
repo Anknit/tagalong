@@ -29,13 +29,16 @@ var map;
                     $scope.driverStatus = (driverStatus === "true");
                     $window.localStorage.setItem('driver-status', $scope.driverStatus);
                 } else {
+                    $window.document.getElementsByClassName('loading-blocker')[0].style.display = 'block';
                     $http.get(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/status', {}).then(function (response) {
                         $scope.driverStatus = response.status;
                         $window.localStorage.setItem('driver-status', $scope.driverStatus);
+                        $window.document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
                     }, function (error) {
                         $window.console.log(error);
                         $scope.driverStatus = true;
                         $window.localStorage.setItem('driver-status', $scope.driverStatus);
+                        $window.document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
                     });
                 }
             }
@@ -190,7 +193,7 @@ var map;
             localStorage.setItem("cardholderName", $scope.cardholderName);
             localStorage.setItem("cardBillingAddress", $scope.cardBillingAddress);
             $window.alert('Card details added successfully');
-            $window.location.href = "#profile/account";
+            $window.location.href = "#directDeposit";
         };
     }]);
     modCtrl.controller('checkingAccountCtrl', ['$scope', '$window', function ($scope, $window) {
@@ -200,7 +203,7 @@ var map;
                 localStorage.setItem("checkingAccountRoutingNum", $scope.checkingAccountRoutingNum);
                 localStorage.setItem("checkingAccountNum", $scope.checkingAccountNum);
                 $window.alert('checking account added successfully');
-                $window.location.href = "#profile/directPayment";
+                $window.location.href = "#directPayment";
             } else {
                 $window.alert('Account Number mismatch');
             }
@@ -211,16 +214,16 @@ var map;
             localStorage.setItem("paypalAccountEmail", $scope.paypalAccountEmail);
             localStorage.setItem("paypalAccountNum", $scope.paypalAccountNum);
             $window.alert('paypal account added successfully');
-            $window.location.href = "#profile/directPayment";
+            $window.location.href = "#directPayment";
         };
     }]);
     modCtrl.controller('directAccountCtrl', ['$scope', '$window', function ($scope, $window) {
         $scope.directPaymentOpt = "paypal";
         $scope.addDirectPayment = function () {
             if ($scope.directPaymentOpt === "paypal") {
-                window.location.href = '#profile/directPayment/paypalAccount';
+                window.location.href = '#paypalAccount';
             } else {
-                window.location.href = '#profile/directPayment/checkingAccount';
+                window.location.href = '#checkingAccount';
             }
         };
     }]);
@@ -406,7 +409,7 @@ var map;
             }
         };
     }]);
-    modCtrl.controller('accountCtrl', function ($scope) {});
+    modCtrl.controller('directDepositCtrl', function ($scope) {});
     modCtrl.controller('yourDetailsCtrl', ['$scope', 'verificationService', '$location', '$state', '$ionicHistory', function ($scope, verificationService, $location, $state, $ionicHistory) {
         verificationService.isMobileVerified().then(function (status) {
             if (status) {
@@ -436,7 +439,7 @@ var map;
             $state.go('dashboard');
         };
     }]);
-    modCtrl.controller('favoritesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {
+    modCtrl.controller('driverRoutesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {        
         $scope.weekdays = [
             {
                 name: 'Mon',
@@ -621,6 +624,7 @@ var map;
         };
     }]);
     modCtrl.controller('trackingHomeCtrl', function ($scope) {});
+    modCtrl.controller('driverOptionsCtrl', function ($scope) {});
     modCtrl.controller('trackingCtrl', function ($scope) {});
     modCtrl.controller('delieveryStatusCtrl', function ($scope) {});
     modCtrl.controller('orderHomeCtrl', ['$scope', 'ordersService', '$window', '$location', function ($scope, ordersService, $window, $location) {
@@ -750,26 +754,6 @@ var map;
     modCtrl.controller('paymentMethodCtrl', ['$scope', '$http', 'API_SERVICE_BASE', '$window', 'ordersService', '$rootScope', '$location', function ($scope, $http, API_SERVICE_BASE, $window, ordersService, $rootScope, $location) {
         $scope.paymentOptions = [];
         $scope.selectedPayOption = {};
-        if ($rootScope.newCardAdded) {
-            $scope.submitOrder();
-            $rootScope.newCardAdded = false;
-        } else {
-            $http.get(API_SERVICE_BASE + 'api/v1/users/user', {}).then(function (response) {
-                $scope.paymentOptions = response.data.creditCards;
-                $scope.userData = {
-                    id: response.data.id,
-                    firstName: response.data.firstName,
-                    lastName: response.data.lastName,
-                    email: response.data.email,
-                    mobileNumber: response.data.mobileNumber || '',
-                    defaultAddress: response.data.defaultAddress || '',
-                    contactPreferences: response.data.contactPreferences,
-                    gender: response.data.gender || ''
-                };
-            }, function (error) {
-
-            });
-        }
         $scope.submitOrder = function () {
             var payData;
             if ($rootScope.newCardAdded) {
@@ -798,6 +782,26 @@ var map;
                 $window.alert('Failed to submit order');
             });
         };
+        if ($rootScope.newCardAdded) {
+            $scope.submitOrder();
+            $rootScope.newCardAdded = false;
+        } else {
+            $http.get(API_SERVICE_BASE + 'api/v1/users/user', {}).then(function (response) {
+                $scope.paymentOptions = response.data.creditCards;
+                $scope.userData = {
+                    id: response.data.id,
+                    firstName: response.data.firstName,
+                    lastName: response.data.lastName,
+                    email: response.data.email,
+                    mobileNumber: response.data.mobileNumber || '',
+                    defaultAddress: response.data.defaultAddress || '',
+                    contactPreferences: response.data.contactPreferences,
+                    gender: response.data.gender || ''
+                };
+            }, function (error) {
+
+            });
+        }
     }]);
     modCtrl.controller('addPaymentMethodCtrl', ['$scope', '$location', 'paymentService', '$filter', function ($scope, $location, paymentService, $filter) {
         $scope.addCard = {
