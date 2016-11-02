@@ -29,7 +29,10 @@
                     <ion-content padding="false" class="side-menu-left has-header">
                         <a ui-sref="dashboard" class="button button-calm button-block button-clear" menu-close>Home</a>
                         <a ui-sref="profile.about" class="button button-calm  button-block button-clear" data-ng-hide="USER_ROLE === 1" menu-close>Profile</a>
+<!--
                         <a ui-sref="favorites" class="button button-calm  button-block button-clear" menu-close data-ng-if="isDriverUser">Favorites</a>
+-->
+                        <a ui-sref="driverOptions" class="button button-calm  button-block button-clear" menu-close data-ng-if="isDriverUser">Driver Options</a>
                         <a ui-sref="settings" class="button button-calm  button-block button-clear" menu-close>Settings</a>
                         <a ui-sref="trackingHome" class="button button-calm  button-block button-clear" menu-close>Tracking</a>
                         <a ui-sref="yourDetails" class="button button-calm  button-block button-clear" menu-close data-ng-if="!isDriverUser">Become a driver</a>
