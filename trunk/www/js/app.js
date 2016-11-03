@@ -46,6 +46,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
         $rootScope.authData = {
             token: localStorage.getItem('access_token')
         };
+        $rootScope.driverDeliveries = $window.localStorage.getItem('driverDeliveries') ? angular.fromJson($window.localStorage.getItem('driverDeliveries')) : {};
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromParams) {
             if (toState.roles !== 3 && toState.roles !== USER_ROLE) {
                 event.preventDefault();
@@ -67,9 +68,13 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 $rootScope.side_menu.style.display = "none";
             }
         });
-        function orderActionCompleted(orderId, response) {
+        function orderActionCompleted(orderId, response, driverId) {
             $interval.cancel(orderWindowTimer[orderId]);
             orderWindowTimer[orderId] = undefined;
+            $rootScope.driverDeliveries = $rootScope.driverDeliveries || {};
+            $rootScope.driverDeliveries[driverId] = $rootScope.driverDeliveries[driverId]  || [];
+            $rootScope.driverDeliveries[driverId].push({orderIdNum: orderId, orderStatus: response, orderData: $rootScope.notifyData[orderId]});
+            $window.localStorage.setItem('driverDeliveries', angular.toJson($rootScope.driverDeliveries));
             delete orderWindowTimer[orderId];
             delete $rootScope.notifyData[orderId];
             var alertMessage = '',
@@ -147,9 +152,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
                     $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
-                        orderActionCompleted(orderId, 'Accepted');
+                        orderActionCompleted(orderId, 'Accepted', driverId);
                     }, function (error) {
-                        orderActionCompleted(orderId, 'Failed');
+                        orderActionCompleted(orderId, 'Failed', driverId);
                     });
                 };
                 $rootScope.notifyDecline = function (args) {
@@ -163,9 +168,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
                     $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
-                        orderActionCompleted(orderId, 'Rejected');
+                        orderActionCompleted(orderId, 'Rejected', driverId);
                     }, function (error) {
-                        orderActionCompleted(orderId, 'Failed');
+                        orderActionCompleted(orderId, 'Failed', driverId);
                     });
                 };
                 $rootScope.notifyClose = function () {
@@ -174,14 +179,15 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     $window.map.setClickable(true);
                 };
                 $rootScope.$on('new-push-notification', function (event, args) {
-                    var orderId = args.additionalData.orderId;
+                    var orderId = args.additionalData.orderId,
+                        driverId = $window.localStorage.getItem('driver-id');
                     $rootScope.notifyData[orderId] = args;
                     orderWindowTimer[orderId] = $interval(function () {
                         $rootScope.notifyData[orderId].additionalData.responseWindow -= 1;
                         if ($rootScope.notifyData[orderId].additionalData.responseWindow === 0) {
-                            orderActionCompleted(orderId, 'Expired');
+                            orderActionCompleted(orderId, 'Expired', driverId);
                         }
-                    }, 1000, 0, true, orderId);
+                    }, 1000, 0, true, orderId, driverId);
                     $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
                     $rootScope.playNotificationAudio();
