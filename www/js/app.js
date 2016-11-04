@@ -174,7 +174,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     });
                 };
                 $rootScope.notifyClose = function () {
-                    $rootScope.pauseNotificationAudio();
+                    if (localStorage.getItem('settingsSound') !== "false") {
+                        $rootScope.pauseNotificationAudio();
+                    }
                     $rootScope.notificationModal.hide();
                     $window.map.setClickable(true);
                 };
@@ -190,7 +192,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                     }, 1000, 0, true, orderId, driverId);
                     $window.map.setClickable(false);
                     $rootScope.notificationModal.show();
-                    $rootScope.playNotificationAudio();
+                    if (localStorage.getItem('settingsSound') !== "false") {
+                        $rootScope.playNotificationAudio();
+                    }
                 });
                 $rootScope.$on('push-notification-error', function (event, args) {
                     $window.console.log(args);
