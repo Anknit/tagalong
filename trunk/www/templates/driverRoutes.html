@@ -82,13 +82,17 @@
                     <div class = "input-label">
                         Recurrence
                     </div>
+                    <ion-checkbox>Monday</ion-checkbox>
+                    <ion-checkbox>Tuesday</ion-checkbox>
+                    <ion-checkbox>Wednesday</ion-checkbox>
+                    <ion-checkbox>Thursday</ion-checkbox>
+                    <ion-checkbox>Friday</ion-checkbox>
+                    <ion-checkbox>Saturday</ion-checkbox>
+                    <ion-checkbox>Sunday</ion-checkbox>
+<!--
                     <select multiple data-ng-model="$parent.recurrenceg" data-ng-options="item.name for item in weekdays"></select>
+-->
                 </label>
-                <div class="item item-input item-select">
-                    <span class="input-label">Recurrence</span>
-                    <select multiple data-ng-model="$parent.recurrence" data-ng-options="item.name for item in weekdays">
-                    </select>
-                </div>
                 <button type="button" class="button" data-ng-click="submitNewRoute();">Add</button>
                 <button class="button" data-ng-click="hideRouteForm();">Cancel</button>
             </form>
