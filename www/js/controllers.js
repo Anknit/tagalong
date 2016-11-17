@@ -521,7 +521,36 @@ var map;
                 }
 
             };
-            $scope.recurrence = [];
+            $scope.weekdays = [
+                {
+                    name: 'Mon',
+                    selected: false
+                },
+                {
+                    name: 'Tue',
+                    selected: false
+                },
+                {
+                    name: 'Wed',
+                    selected: false
+                },
+                {
+                    name: 'Thu',
+                    selected: false
+                },
+                {
+                    name: 'Fri',
+                    selected: false
+                },
+                {
+                    name: 'Sat',
+                    selected: false
+                },
+                {
+                    name: 'Sun',
+                    selected: false
+                }
+            ];
         }
         $scope.driverRoutes = [];
         var driverId = $window.localStorage.getItem('driver-id');
@@ -592,12 +621,14 @@ var map;
             $scope.newroute.startTime = $scope.routeDateTime.getHours() + ':' + $scope.routeDateTime.getMinutes();
             $scope.newroute.timeZone = $scope.routeDateTime.getTimezoneOffset();
             $scope.newroute.routeName = $scope.routeName;
-            if ($scope.recurrence.length > 0) {
+            if ($scope.recurrenceShow) {
                 $scope.newroute.recurrence.daysOfWeek = [];
-                for (i = 0; i < $scope.recurrence.length; i = i + 1) {
-                    $scope.newroute.recurrence.daysOfWeek.push({
-                        'day': $scope.recurrence[i].name
-                    });
+                for (i = 0; i < $scope.weekdays.length; i = i + 1) {
+                    if ($scope.weekdays[i].selected) {
+                        $scope.newroute.recurrence.daysOfWeek.push({
+                            'day': $scope.weekdays[i].name
+                        });
+                    }
                 }
             }
             if ($scope.routeEditMode) {
