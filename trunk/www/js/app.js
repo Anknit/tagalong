@@ -59,6 +59,15 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                 $rootScope.side_menu.style.display = "block";
             }
         });
+        $rootScope.disableTap = function(elem) {
+            var container = document.getElementsByClassName('pac-container');
+            angular.element(container).attr('data-tap-disabled', 'true');
+            var backdrop = document.getElementsByClassName('backdrop');
+            angular.element(backdrop).attr('data-tap-disabled', 'true');
+            angular.element(container).on("click", function() {
+                elem.blur();
+            });
+        };
         $rootScope.$watch(function () {
             return $ionicSideMenuDelegate.getOpenRatio();
         }, function (ratio) {

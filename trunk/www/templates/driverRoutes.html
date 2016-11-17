@@ -51,7 +51,7 @@
                              name="fromaddress"
                              id="fromaddress"
                              class="form-control" 
-                             placeholder="Enter address">
+                             placeholder="Enter address" data-tap-disabled="true" ng-change='$parent.disableTap(this)'>
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">To Address</span>
@@ -72,11 +72,17 @@
                              name="destaddress"
                              id="destaddress"
                              class="form-control" 
-                             placeholder="Enter address">
+                             placeholder="Enter address" data-tap-disabled="true" ng-change='$parent.disableTap(this)'>
                 </label>
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Date and Time</span>
                     <input type="datetime-local" placeholder="" data-ng-model="$parent.routeDateTime">
+                </label>
+                <label class = "item item-input item-select item-light">
+                    <div class = "input-label">
+                        Recurrence
+                    </div>
+                    <select multiple data-ng-model="$parent.recurrence" data-ng-options="item.name for item in weekdays">
                 </label>
                 <div class="item item-input item-select">
                     <span class="input-label">Recurrence</span>
