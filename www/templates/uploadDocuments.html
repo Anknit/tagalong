@@ -1,9 +1,9 @@
 <ion-view title="Upload Documents" id="page19" class=" ">
     <ion-content padding="true" class="has-header">
         <div data-ng-hide="showUploadOption">
-            <p id="uploadDocuments-markdown12" style="color:#000000;">Upload your documents.</p>
-            <p id="uploadDocuments-markdown13" style="color:#000000;">We need copies of few documents to get you started.</p>
-            <p id="uploadDocuments-markdown14" style="color:#000000;">Please take a picture of each and upload them here</p>
+            <p>Upload your documents.</p>
+            <p>We need copies of few documents to get you started.</p>
+            <p>Please take a picture of each and upload them here</p>
             <div class="list card " id="uploadDocuments-card22">
                 <ion-item class="item-icon-left  " id="uploadDocuments-list-item10">
                     <i class="icon ion-ionic"></i>
@@ -41,6 +41,7 @@
                     </div>
                 </div>
             </div>
+<!--
             <div class="list card " id="uploadDocuments-card122">
                 <ion-item class="item-icon-left  " id="uploadDocuments-list-item11">
                     <i class="icon ion-ionic"></i>
@@ -119,7 +120,8 @@
                     </div>
                 </div>
             </div>
-            <div class="list ng-cloak" data-ng-show="$parent.uploadedDocsStatus.license && $parent.uploadedDocsStatus.registration && $parent.uploadedDocsStatus.insurance">
+-->
+            <div class="list ng-cloak" data-ng-show="$parent.uploadedDocsStatus.license">
                 <div style="text-align:center">
                     <button class="button button-calm" data-ng-click="$parent.becomeDriver()">Submit Request</button>
                     <button class="button button-stable" data-ng-click="$parent.cancelBecomeDriver()">Cancel</button>
