@@ -23,7 +23,7 @@ var push,
         window.location.href = "./login.html";
     }
 }());
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete'])
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'vsGoogleAutocomplete', 'input-ssn'])
     .constant('AUTH_SERVICE_BASE', 'https://tagalongidm.azurewebsites.net/')
     .constant('API_SERVICE_BASE', 'https://tagalongapi.azurewebsites.net/')
     .constant('UPLOAD_URI', 'https://tagalongdocs.azurewebsites.net/api/documents/')
