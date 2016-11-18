@@ -12,18 +12,6 @@
                 <div class="item item-body " id="uploadDocuments-list-item-container6">
                     <div class="list">
                         <form class="ng-cloak" data-ng-show="!$parent.uploadedDocsStatus.license">
-                            <label class="item item-input item-stacked-label">
-                                <span class="input-label">Expiry Date</span>
-                                <input type="date" placeholder="" data-ng-model="$parent.license.expiry">
-                            </label>
-                            <label class="item item-input item-stacked-label">
-                                <span class="input-label">License #</span>
-                                <input type="text" placeholder="license number" data-ng-model="$parent.license.number">
-                            </label>
-                            <label class="item item-input item-stacked-label">
-                                <span class="input-label">State</span>
-                                <input type="text" placeholder="" data-ng-model="$parent.license.state">
-                            </label>
                             <button id="uploadDocuments-button34" class="button button-stable" ng-click="$parent.getDriverLicense()" style="margin:5px 0px;">Browse image</button>
                             <div class="ng-cloak" data-ng-show="$parent.licenseLoaded">
                                 <span data-ng-bind="$parent.licenseImgName"></span>
@@ -35,91 +23,75 @@
                             </div>
                         </form>
                         <div class="ng-cloak" data-ng-show="$parent.uploadedDocsStatus.license">
-                            <i class="icon ion-ios-checkmark"></i>
-                            Uploaded
+                            <i class="icon ion-ios-checkmark"></i>&nbsp;Document Uploaded
+                            <label class="item item-input item-stacked-label">
+                                <span class="input-label">DOB</span>
+                                <input type="date" placeholder="Date of birth" data-ng-model="$parent.license.dob">
+                            </label>
+                            <label class="item item-input item-stacked-label">
+                                <span class="input-label">License #</span>
+                                <input type="text" placeholder="Driver license number" data-ng-model="$parent.license.number">
+                            </label>
+                            <label class="item item-input item-stacked-label">
+                                <span class="input-label">SSN</span>
+                                <input type="text" placeholder="Social Security Number" data-ng-model="$parent.license.ssn" ssn>
+                            </label>
+                            <label class="item item-input item-stacked-label">
+                                <span class="input-label">State</span>
+                                <input type="text" placeholder="Driver License Issued State" data-ng-model="$parent.license.state">
+                            </label>
+                            <label class="item item-input item-stacked-label">
+                                <span class="input-label">Address</span>
+                                <input  vs-google-autocomplete ng-model="$parent.homeaddress.name"
+                             vs-place="$parent.homeaddress.place" 
+                             vs-place-id="$parent.homeaddress.components.placeId"
+                             vs-street-number="$parent.homeaddress.components.streetNumber" 
+                             vs-street="$parent.homeaddress.components.street"
+                             vs-city="$parent.homeaddress.components.city"
+                             vs-state="$parent.homeaddress.components.state"
+                             vs-country-short="$parent.homeaddress.components.countryCode"
+                             vs-country="$parent.homeaddress.components.country"
+                             vs-post-code="$parent.homeaddress.components.postCode"
+                             vs-district="$parent.homeaddress.components.district"
+                             vs-latitude="$parent.homeaddress.components.location.lat"
+                             vs-longitude="$parent.homeaddress.components.location.long"
+                             type="text" 
+                             name="homeaddress"
+                             id="homeaddress"
+                             class="form-control" 
+                             placeholder="Home address" data-tap-disabled="true" ng-change='$parent.disableTap(this)'>
+                            </label>
                         </div>
                     </div>
                 </div>
             </div>
 <!--
-            <div class="list card " id="uploadDocuments-card122">
-                <ion-item class="item-icon-left  " id="uploadDocuments-list-item11">
-                    <i class="icon ion-ionic"></i>
-                    Vehicle Registration
-                </ion-item>
-                <div class="item item-body " id="uploadDocuments-list-item-container8">
-                    <div class="list">
-                        <form class="ng-cloak" data-ng-show="!$parent.uploadedDocsStatus.registration">
-                            <label class="item item-input item-stacked-label " id="uploadDocuments-input31">
-                                <span class="input-label">Expiry Date</span>
-                                <input type="date" placeholder="" data-ng-model="$parent.registration.expiry">
-                            </label>
-                            <label class="item item-input item-stacked-label " id="uploadDocuments-input38">
-                                <span class="input-label">VIN #</span>
-                                <input type="text" placeholder="vin number" data-ng-model="$parent.registration.vin">
-                            </label>
-                            <label class="item item-input item-stacked-label " id="uploadDocuments-input39">
-                                <span class="input-label">State</span>
-                                <input type="text" placeholder="" data-ng-model="$parent.registration.state">
-                            </label>
-                            <label class="item item-input item-stacked-label " id="uploadDocuments-input44">
-                                <span class="input-label">Car Make</span>
-                                <input type="text" placeholder="" data-ng-model="$parent.registration.carmake">
-                            </label>
-                            <label class="item item-input item-stacked-label " id="uploadDocuments-input45">
-                                <span class="input-label">Car model</span>
-                                <input type="text" placeholder="" data-ng-model="$parent.registration.carmodel">
-                            </label>
-                            <label class="item item-input item-stacked-label " id="uploadDocuments-input46">
-                                <span class="input-label">Car Year</span>
-                                <input type="month" placeholder="" data-ng-model="$parent.registration.caryear">
-                            </label>
-                            <button id="uploadDocuments-button36" class=" button button-stable" ng-click="$parent.getVehicleRegistration()" style="margin:5px 0px;">Browse image</button>
-                            <div class="ng-cloak" data-ng-show="$parent.registrationLoaded">
-                                <span data-ng-bind="$parent.registrationImgName"></span>
-                                <button class="button button-clear button-positive" data-ng-click="$parent.showLoadedImage()">Preview</button>
-                                <div style="text-align:center">
-                                    <button class="button button-calm" data-ng-click="$parent.uploadCurrentDocument()">Upload</button>
-                                    <button class="button button-stable" data-ng-click="$parent.cancelUpload()">Cancel</button>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="ng-cloak" data-ng-show="$parent.uploadedDocsStatus.registration">
-                            <i class="icon ion-ios-checkmark"></i>
-                            Uploaded
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="list card " id="uploadDocuments-card21">
-                <ion-item class="item-icon-left  " id="uploadDocuments-list-item14">
-                    <i class="icon ion-ionic"></i>
-                    Vehicle Insurance
-                </ion-item>
-                <div class="item item-body " id="uploadDocuments-list-item-container9">
-                    <div class="list">
-                        <form class="ng-cloak" data-ng-show="!$parent.uploadedDocsStatus.insurance">
-                            <label class="item item-input item-stacked-label " id="uploadDocuments-input48">
-                                <span class="input-label">Expiry Date</span>
-                                <input type="date" placeholder="" data-ng-model="$parent.insurance.expiry">
-                            </label>
-                            <button id="uploadDocuments-button40" class=" button button-stable" ng-click="$parent.getVehicleInsurance()" style="margin:5px 0px;">Browse image</button>
-                            <div class="ng-cloak" data-ng-show="$parent.insuranceLoaded">
-                                <span data-ng-bind="$parent.insuranceImgName"></span>
-                                <button class="button button-clear button-positive" data-ng-click="$parent.showLoadedImage()">Preview</button>
-                                <div style="text-align:center">
-                                    <button class="button button-calm" data-ng-click="$parent.uploadCurrentDocument()">Upload</button>
-                                    <button class="button button-stable" data-ng-click="$parent.cancelUpload()">Cancel</button>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="ng-cloak" data-ng-show="$parent.uploadedDocsStatus.insurance">
-                            <i class="icon ion-ios-checkmark"></i>
-                            Uploaded
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+{
+  "legalFirstName": "string",
+  "legalMiddleName": "string",
+  "legalLastName": "string",
+  "dlNumber": "string",
+  "dlState": "string",
+  "dob": "2016-11-18T06:15:25.080Z",
+  "ssn": "string",
+  "address": {
+    "address1": "string",
+    "address2": "string",
+    "city": "string",
+    "stateOrProvinceCode": "string",
+    "postalCode": "string",
+    "countryCode": "string",
+    "formattedAddress": "string"
+  },
+  "requestDate": "2016-11-18T06:15:25.080Z",
+  "documents": [
+    {
+      "key": "string",
+      "value": "string"
+    }
+  ]
+}
 -->
             <div class="list ng-cloak" data-ng-show="$parent.uploadedDocsStatus.license">
                 <div style="text-align:center">
