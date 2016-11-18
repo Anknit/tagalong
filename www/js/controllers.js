@@ -351,7 +351,33 @@ var map;
         };
         $scope.becomeDriver = function () {
             var legalName = window.localStorage.getItem('legal-name');
-            $http.post(API_SERVICE_BASE + 'api/v1/drivers', {legalname: legalName}, {}).then(function (response) {
+            var postData = {
+              legalFirstName: "string",
+              legalMiddleName: "string",
+              legalLastName: "string",
+              dlNumber: "string",
+              dlState: "string",
+              dob: "2016-11-18T06:15:25.080Z",
+              ssn: "string",
+              address: {
+                address1: "string",
+                address2: "string",
+                city: "string",
+                stateOrProvinceCode: "string",
+                postalCode: "string",
+                countryCode: "string",
+                formattedAddress: "string"
+              },
+              requestDate: "2016-11-18T06:15:25.080Z",
+              documents: [
+                {
+                  key: "string",
+                  value: "string"
+                }
+              ]
+                
+            };
+            $http.post(API_SERVICE_BASE + 'api/v1/drivers', postData, {}).then(function (response) {
                 $rootScope.isDriverUser = true;
                 window.localStorage.setItem('isDriver', true);
                 window.localStorage.setItem('driver-id', response.data.id);
