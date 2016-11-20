@@ -249,6 +249,9 @@ var map;
             $scope.documents = response.data.collection.items || [];
             for (i = 0; i < $scope.documents.length; i = i + 1) {
                 docItem = $scope.documents[i].data;
+                if (docItem[5].value === '1') {
+                    $scope.licenseDocUrl = $scope.documents[i].href;
+                }
                 updateDocStatus(docItem[5].value);
             }
         });
@@ -311,6 +314,9 @@ var map;
             docMgrService.uploadDocument($scope.imgData, additionalData, function (response) {
                 window.document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
                 $scope.documents.push(response.collection.items);
+                if ($scope.uploadDocType.toString() === '1') {
+                    $scope.licenseDocUrl = response.collection.items.href;
+                }
                 updateDocStatus($scope.uploadDocType.toString());
                 $scope.uploadDocType = 0;
                 $scope.$digest();
@@ -350,29 +356,30 @@ var map;
             $scope.showUploadOption = false;
         };
         $scope.becomeDriver = function () {
-            var legalName = window.localStorage.getItem('legal-name');
+            var legalName = window.localStorage.getItem('legal-name').trim() || '';
+            legalName = legalName.split(' ');
             var postData = {
-              legalFirstName: "string",
-              legalMiddleName: "string",
-              legalLastName: "string",
-              dlNumber: "string",
-              dlState: "string",
-              dob: "2016-11-18T06:15:25.080Z",
-              ssn: "string",
+              legalFirstName: legalName[0],
+              legalMiddleName: '',
+              legalLastName: legalName[1] || '',
+              dlNumber: $scope.license.number,
+              dlState: $scope.license.state,
+              dob: $scope.license.dob.toISOString(),
+              ssn: $scope.license.ssn,
               address: {
-                address1: "string",
-                address2: "string",
-                city: "string",
-                stateOrProvinceCode: "string",
-                postalCode: "string",
-                countryCode: "string",
-                formattedAddress: "string"
+                address1: $scope.homeaddress.components.streetNumber + ' ' + $scope.homeaddress.components.street,
+                address2: "",
+                city: $scope.homeaddress.components.city,
+                stateOrProvinceCode: "",
+                postalCode: $scope.homeaddress.components.postCode,
+                countryCode: $scope.homeaddress.components.countryCode,
+                formattedAddress: $scope.homeaddress.name
               },
-              requestDate: "2016-11-18T06:15:25.080Z",
+              requestDate: (new Date()).toISOString(),
               documents: [
                 {
-                  key: "string",
-                  value: "string"
+                  key: "1",
+                  value: $scope.licenseDocUrl
                 }
               ]
                 
