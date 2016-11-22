@@ -3,7 +3,7 @@ var map;
 (function (angular) {
     'use strict';
     var modCtrl = angular.module('app.controllers', []);
-    modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', '$http', 'API_SERVICE_BASE', 'userprofileService', function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window, $http, API_SERVICE_BASE, userprofileService) {
+    modCtrl.controller('dashboardCtrl', ['$scope', '$rootScope', '$ionicSideMenuDelegate', 'se_locationService', '$window', '$http', 'API_SERVICE_BASE', 'userprofileService', '$ionicModal',function ($scope, $rootScope, $ionicSideMenuDelegate, se_locationService, $window, $http, API_SERVICE_BASE, userprofileService, $ionicModal) {
         function checkDriverStatus() {
             var driverId,
                 userinfo = $rootScope.user.userInfo,
@@ -41,6 +41,18 @@ var map;
                         $window.document.getElementsByClassName('loading-blocker')[0].style.display = 'none';
                     });
                 }
+                $rootScope.driverDeliveries = $rootScope.driverDeliveries || {};
+                $rootScope.driverDeliveries[driverId] = $rootScope.driverDeliveries[driverId]  || [];
+                $ionicModal.fromTemplateUrl('templates/deliveriesModal.html', {
+                    scope: $scope
+                }).then(function (modal) {
+                    $rootScope.deliveriesModal = modal;
+                    $scope.deliveries = $rootScope.driverDeliveries[driverId];
+                });
+                $scope.showDeliveries = function () {
+                    $rootScope.deliveriesModal.show();
+                };
+
             }
         }
         if ($rootScope.user && typeof $rootScope.user === "object") {

@@ -1,0 +1,18 @@
+<ion-modal-view>
+    <ion-header-bar class="bar bar-header bar-positive">
+        <h1 class="title">Delivery Requests</h1>
+    </ion-header-bar>
+    <ion-content class="padding">
+        <div class="card" data-ng-repeat="order in deliveries">
+            <div class="item item-text-wrap">
+                <p data-ng-bind="order.orderData.title"></p>
+                <p data-ng-bind="order.orderData.message"></p>
+                <p data-ng-bind="order.orderData.additionalData.address"></p>
+                <p data-ng-bind="order.orderData.additionalData.requestedPickupTime"></p>
+            </div>
+            <div class="item item-text-wrap">
+                Response : <strong data-ng-bind="order.orderStatus"></strong>. 
+            </div>
+        </div>
+    </ion-content>
+</ion-modal-view>
