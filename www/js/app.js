@@ -205,6 +205,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                         $rootScope.playNotificationAudio();
                     }
                 });
+                $rootScope.$on('modal.hidden', function() {
+                    $window.map.setClickable(true);
+                });
                 $rootScope.$on('push-notification-error', function (event, args) {
                     $window.console.log(args);
                 });
