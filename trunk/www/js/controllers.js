@@ -50,8 +50,12 @@ var map;
                     $scope.deliveries = $rootScope.driverDeliveries[driverId];
                 });
                 $scope.showDeliveries = function () {
+                    $window.map.setClickable(false);
                     $rootScope.deliveriesModal.show();
                 };
+                $scope.$on('modal.hidden', function() {
+                    $window.map.setClickable(true);
+                });
 
             }
         }
