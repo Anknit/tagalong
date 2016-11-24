@@ -397,9 +397,11 @@ var map;
                 
             };
             $http.post(API_SERVICE_BASE + 'api/v1/drivers', postData, {}).then(function (response) {
+/*
                 $rootScope.isDriverUser = true;
                 window.localStorage.setItem('isDriver', true);
                 window.localStorage.setItem('driver-id', response.data.id);
+*/
                 $ionicHistory.nextViewOptions({
                     disableBack: true
                 });
