@@ -493,6 +493,10 @@ var map;
     modCtrl.controller('driverRoutesCtrl', ['$scope', 'driverRouteService', '$window', function ($scope, driverRouteService, $window) {        
         $scope.weekdays = [
             {
+                name: 'Sun',
+                selected: false
+            },
+            {
                 name: 'Mon',
                 selected: false
             },
@@ -514,10 +518,6 @@ var map;
             },
             {
                 name: 'Sat',
-                selected: false
-            },
-            {
-                name: 'Sun',
                 selected: false
             }
         ];
@@ -574,6 +574,10 @@ var map;
             };
             $scope.weekdays = [
                 {
+                    name: 'Sun',
+                    selected: false
+                },
+                {
                     name: 'Mon',
                     selected: false
                 },
@@ -595,10 +599,6 @@ var map;
                 },
                 {
                     name: 'Sat',
-                    selected: false
-                },
-                {
-                    name: 'Sun',
                     selected: false
                 }
             ];
@@ -676,9 +676,7 @@ var map;
                 $scope.newroute.recurrence.daysOfWeek = [];
                 for (i = 0; i < $scope.weekdays.length; i = i + 1) {
                     if ($scope.weekdays[i].selected) {
-                        $scope.newroute.recurrence.daysOfWeek.push({
-                            'day': $scope.weekdays[i].name
-                        });
+                        $scope.newroute.recurrence.daysOfWeek.push(i);
                     }
                 }
             }

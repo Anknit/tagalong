@@ -123,7 +123,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
             if ($window.PushNotification) {
                 pushNotificationService.init();
                 $ionicModal.fromTemplateUrl('templates/notificationModal.html', {
-                    scope: $rootScope
+                    scope: $rootScope,
+                    hardwareBackButtonClose: false
                 }).then(function (modal) {
                     $rootScope.notificationModal = modal;
                     $rootScope.playNotificationAudio = function () {
@@ -160,10 +161,11 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                             "response": "Accepted",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
+                    orderActionCompleted(orderId, 'Accepted', driverId);
                     $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
-                        orderActionCompleted(orderId, 'Accepted', driverId);
                     }, function (error) {
-                        orderActionCompleted(orderId, 'Failed', driverId);
+                        console.log('Order request failed. orderId: '+orderId);
+//                        orderActionCompleted(orderId, 'Failed', driverId);
                     });
                 };
                 $rootScope.notifyDecline = function (args) {
@@ -176,10 +178,11 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
                             "response": "Rejected",
                             "estPickupTime": (new Date(temp.setHours(temp.getHours() + 1))).toISOString()
                         };
+                    orderActionCompleted(orderId, 'Rejected', driverId);
                     $http.post(API_SERVICE_BASE + 'api/v1/drivers/' + driverId + '/response', responseData, {}).then(function (response) {
-                        orderActionCompleted(orderId, 'Rejected', driverId);
                     }, function (error) {
-                        orderActionCompleted(orderId, 'Failed', driverId);
+                        console.log('Order request failed. orderId: '+orderId);
+//                        orderActionCompleted(orderId, 'Failed', driverId);
                     });
                 };
                 $rootScope.notifyClose = function () {
